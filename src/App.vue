@@ -3,13 +3,14 @@
     <template v-for=" page  in pages">
       <SimplePage 
         v-if="page.type=='pic_button'" 
+        :from="from"
         :visible = "currentPage==page.name" 
         :config = "page"  
         @routeTo= "routeTo" 
         :key= "page.name">
       </SimplePage>
       <PDFPage 
-      :from="from"
+        :from="from"
         v-if="page.type=='pdf'" 
         :visible = "currentPage===page.name" 
         :key= "page.name" 
@@ -17,6 +18,33 @@
         :pageParam= "currentPageParams"
         @routeTo= "routeTo">
       </PDFPage>
+      <VideoPage 
+       v-if="page.type=='video'" 
+       :from="from"
+        :visible = "currentPage===page.name" 
+        :key= "page.name" 
+        :config= "page" 
+        :pageParam= "currentPageParams"
+        @routeTo= "routeTo">
+      </VideoPage>
+      <Pic3DPage
+       v-if="page.type=='pic_3d'" 
+        :from="from"
+        :visible = "currentPage===page.name" 
+        :key= "page.name" 
+        :config= "page" 
+        :pageParam= "currentPageParams"
+        @routeTo= "routeTo">  
+      </Pic3DPage>
+       <PicPage
+        v-if="page.type=='pic'" 
+        :from="from"
+        :visible = "currentPage===page.name" 
+        :key= "page.name" 
+        :config= "page" 
+        :pageParam= "currentPageParams"
+        @routeTo= "routeTo">  
+      </PicPage>
     </template>
   </div>
 </template>
@@ -25,6 +53,9 @@
 import SimplePage  from './components/SimplePage'
 import PDFPage from './components/PDFPage'
 import {getConfig,setRem} from './utils/utils'
+import VideoPage  from './components/VideoPage'
+import Pic3DPage  from './components/Pic3DPage'
+import PicPage from './components/PicPage'
 const {app} = window.electron.remote
 const config = getConfig(app)
 export default {
@@ -43,7 +74,7 @@ export default {
         this.from = this.currentPage;
         this.currentPage = options
       }else{
-        this.from = this.currentPage;
+          this.from = this.currentPage;
         this.currentPage = options.path;
         this.currentPageParams = options.param
       }
@@ -59,7 +90,10 @@ export default {
   },
   components: {
     SimplePage,
-    PDFPage
+    PDFPage,
+    VideoPage,
+    Pic3DPage,
+    PicPage
   }
 
 }
@@ -108,5 +142,11 @@ body{
       left: 0;
       bottom: 0;
       right: 0;
+  }
+  .flexcenter{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
 </style>

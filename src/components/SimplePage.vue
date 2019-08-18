@@ -13,7 +13,7 @@ import {resolveAssets} from '../utils/utils'
 import EButton  from '../components/EButton'
 const {app} = window.electron.remote
 export default {
-    props:['config',"visible"],
+    props:['config',"visible",'from'],
     data(){
         return {
             bg:null,
@@ -35,7 +35,10 @@ export default {
     methods:{
         buttonHandler(e){
             if(e.type=="routeTo"){
-                this.$emit('routeTo',e.options)
+                this.$emit('routeTo',e.options.path)
+            }
+            if(e.type=="actionTo"){
+                this.$emit('routeTo',e.options.action === 'back' ?this.from : '')
             }
         },
         fullClick(){
