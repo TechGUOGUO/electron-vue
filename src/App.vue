@@ -27,6 +27,15 @@
         :pageParam= "currentPageParams"
         @routeTo= "routeTo">
       </VideoPage>
+       <VideoListPage
+        v-if="page.type=='video_list'" 
+        :from="from"
+        :visible = "currentPage===page.name" 
+        :key= "page.name" 
+        :config= "page" 
+        :pageParam= "currentPageParams"
+        @routeTo= "routeTo">  
+      </VideoListPage>
       <Pic3DPage
        v-if="page.type=='pic_3d'" 
         :from="from"
@@ -45,6 +54,7 @@
         :pageParam= "currentPageParams"
         @routeTo= "routeTo">  
       </PicPage>
+       
     </template>
   </div>
 </template>
@@ -54,6 +64,7 @@ import SimplePage  from './components/SimplePage'
 import PDFPage from './components/PDFPage'
 import {getConfig,setRem} from './utils/utils'
 import VideoPage  from './components/VideoPage'
+import VideoListPage from './components/VideoListPage'
 import Pic3DPage  from './components/Pic3DPage'
 import PicPage from './components/PicPage'
 const {app} = window.electron.remote
@@ -93,7 +104,8 @@ export default {
     PDFPage,
     VideoPage,
     Pic3DPage,
-    PicPage
+    PicPage,
+    VideoListPage
   }
 
 }

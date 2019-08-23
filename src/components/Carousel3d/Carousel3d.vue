@@ -3,8 +3,7 @@
 		<div class="carousel-3d-slider" :style="{width: this.slideWidth + 'px', height: this.slideHeight + 'px'}">
 			<slot></slot>
 		</div>
-		<controls v-if="controlsVisible" :next-html="controlsNextHtml" :prev-html="controlsPrevHtml"
-		          :width="controlsWidth" :height="controlsHeight"></controls>
+		<controls v-if="controlsVisible" :next-html="controlsNextHtml" :prev-html="controlsPrevHtml"  :width="controlsWidth" :height="controlsHeight"></controls>
 	</div>
 </template>
 

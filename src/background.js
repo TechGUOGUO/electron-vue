@@ -20,8 +20,8 @@ if(isDevelopment){
 }else{
   staticFolder = join(app.getAppPath(),'../../assets_config')
 }
-app.setName('清镇法条');
-// app.setName('遵义查询机')
+// app.setName('清镇法条');
+app.setName('遵义查询机')
 app.setPath('appData',staticFolder)
 
 // Scheme must be registered before the app is ready
