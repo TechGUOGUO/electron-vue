@@ -1,7 +1,7 @@
 <template>
     <div class="bundlePage" :style="visibleStyle" @click="fullClick">
         <div class='ab' :style="videoContainer">
-          <video  id="vde" draggable="false" v-if="url"  style="position:relative" controls  autoplay  loop  :width='videoWidth' :height="videoHeight"   >
+          <video  id="vde" draggable="false" v-if="url"  style="position:relative" controls   loop  :width='videoWidth' :height="videoHeight"   >
 			<source :src="url" type="video/mp4"/>
           </video>
         </div>
@@ -38,7 +38,15 @@ export default {
                 // Any other options that can be got from plugin documentation
             },
             leftP:0
-			
+        }
+    },
+    watch:{
+        visible(val){
+            if(val){
+                document.getElementById('vde') && document.getElementById('vde').play()
+            }else{
+                document.getElementById('vde') && document.getElementById('vde').pause()
+            }
         }
     },
     mounted(){ 
