@@ -21,7 +21,7 @@
 
 <script>
 import _ from 'lodash'
-import {resolveAssets,rw,rh} from '../utils/utils'
+import {resolveAssets,rw,rh,resolveFolder} from '../utils/utils'
 import EButton  from '../components/EButton'
 import fs from 'fs'
 import { join } from 'path';
@@ -46,11 +46,11 @@ export default {
       },
       pics(){
           if(this.config){
-              let folder = resolveAssets(app,_.get(this.config,'config.pic'))
+              let folder = resolveFolder(app,_.get(this.config,'config.pic'))
               let p = []
             try{
                let temp= fs.readdirSync(folder)  
-               p = temp.map(pi=> join(folder,pi))
+               p = temp.map(pi=> "file://"+ join(folder,pi))
             }catch(e){
                 console.log(e)
             }

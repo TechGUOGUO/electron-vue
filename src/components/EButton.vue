@@ -48,7 +48,7 @@ export default {
                 })
             }
             this.isPressDown =false;
-        },
+         },
         leaveHandler(){
             this.isPressDown =false 
         },

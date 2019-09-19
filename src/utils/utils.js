@@ -20,6 +20,15 @@ export function resolveAssets(app,path){
     if(path){
 
         const path2 =join(app.getPath('appData'),app.getName(),path)
+        return "file://"+path2
+    }else{
+        return null
+    }
+}
+export function resolveFolder(app,path){
+    if(path){
+
+        const path2 =join(app.getPath('appData'),app.getName(),path)
         return path2
     }else{
         return null
@@ -42,3 +51,20 @@ export function rw(num){
 export function rh(num){
     return Math.floor(num *  document.getElementById('app').clientHeight/ screenHeight)+'px'
 }
+
+export function getFile(app,filePath){
+    const path =join(app.getPath('appData'),app.getName(),filePath)
+    let result = null
+    try{
+        const config = fs.readFileSync(path).toString()
+        result =JSON.parse(config)
+    }catch(e){
+        result = {
+            'error':'parse error',
+            'message': e.toString()
+        }
+    }
+    return result
+}
+
+ 

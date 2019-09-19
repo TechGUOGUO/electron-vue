@@ -54,7 +54,23 @@
         :pageParam= "currentPageParams"
         @routeTo= "routeTo">  
       </PicPage>
-       
+      <BtnListPage 
+        v-if="page.type=='pic_buttons'" 
+        :from="from"
+        :visible = "currentPage==page.name" 
+        :config = "page"  
+        @routeTo= "routeTo" 
+        :key= "page.name">
+      </BtnListPage> 
+      <AudioPage 
+        v-if="page.type=='play'" 
+        :from="from"
+        :visible = "currentPage==page.name" 
+        :config = "page"  
+        @routeTo= "routeTo" 
+        :key= "page.name"
+        :pageParam="currentPageParams">
+      </AudioPage> 
     </template>
   </div>
 </template>
@@ -67,6 +83,9 @@ import VideoPage  from './components/VideoPage'
 import VideoListPage from './components/VideoListPage'
 import Pic3DPage  from './components/Pic3DPage'
 import PicPage from './components/PicPage'
+import BtnListPage from './components/BtnListPage'
+import AudioPage from './components/AudioPage'
+
 const {app} = window.electron.remote
 const config = getConfig(app)
 export default {
@@ -105,7 +124,9 @@ export default {
     VideoPage,
     Pic3DPage,
     PicPage,
-    VideoListPage
+    VideoListPage,
+    BtnListPage,
+    AudioPage
   }
 
 }
