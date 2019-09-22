@@ -3,26 +3,36 @@
         <template v-for="(button,index) in buttons">
             <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
         </template>
-        <img draggable="false" :style="img2DStyle" :src="qrcodeimg" v-if="qrshow"> 
+
+        <div style="position:absolute;top:50px;left:50px;color:white;z-index:100">
+            {{result.course}}
+            {{result.score}}
+            {{result.right}}
+            {{result.wrong}}
+        </div>
+
         <img draggable="false" class="bg" :src="bg">
     </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import {resolveAssets,rh,rw} from '../utils/utils'
+import {resolveAssets} from '../utils/utils'
 import EButton  from '../components/EButton'
 const {app} = window.electron.remote
-import * as  QRCode  from 'qrcode'
-
+ 
 export default {
-    props:['config',"visible",'from'],
+    props:['config',"visible",'from','param'],
     data(){
         return {
             bg:null,
-            buttons:[],
-            qrcodeimg:null,
-            qrshow:false
+            buttons:[], 
+            result:{
+                course:'',
+                score:0,
+                right:0,
+                wrong:0
+            }
         }
     },
     mounted(){
@@ -31,39 +41,23 @@ export default {
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
 
-        let img2D = _.get(this.config,'config.img2D.url')
-        if(img2D){
-            this.qrshow = true
-            let path = resolveAssets(app,_.get(this.config,'config.img2D.url'))
-            QRCode.toDataURL(path, (err, url) =>{
-                console.log(url)
-                this.qrcodeimg = url
-                // return url
-            })
-        }
-        
+
     },
     computed:{
       visibleStyle(){
           return this.visible ? '' : 'display:none'
       },
-
-      img2DStyle(){
-            let list = []
-            list.push('position:absolute')
-
-            list.push(`left:${rw(_.get(this.config,'config.img2D.x'))}`)
-            list.push(`top:${rh(_.get(this.config,'config.img2D.y'))}`)
-            list.push(`width:${rw(_.get(this.config,'config.img2D.width'))}`)
-            list.push(`height:${rh(_.get(this.config,'config.img2D.height'))}`)
-
-            list.push('z-index:1')
-            let style = list.join(';')
-            console.log(style)
-            return style    
-        }
+ 
 
     },
+
+    watch:{
+       param(val){
+           this.result = val; 
+           console.log(this.result)
+       }
+    },
+
     methods:{
         buttonHandler(e){
             if(e.type=="routeTo"){
@@ -78,13 +72,13 @@ export default {
                 this.$emit('routeTo',e.options.action === 'back' ?this.from : '')
             }
         },
+
         fullClick(){
             let c = _.get(this.config,'config.bgclick')
             if(c && c.to){
                 this.$emit('routeTo',c.to)
             }
         }
-
     },
     components:{
         EButton
