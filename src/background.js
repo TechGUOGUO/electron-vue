@@ -21,7 +21,7 @@ if(isDevelopment){
   staticFolder = join(app.getAppPath(),'../../assets_config')
 }
 // app.setName('清镇法条');
-app.setName('高考试题')
+app.setName('点歌')
 app.setPath('appData',staticFolder)
 
 // Scheme must be registered before the app is ready

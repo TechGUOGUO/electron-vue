@@ -8,7 +8,7 @@
         <div :style="contentStyle">
             <div :style="labelStyle" v-for="(label,index) in curLabels" v-bind:key="index" @click="tapHandler(index)">           
                 <img draggable="false" width ='20px' height="20px" src="../assets/icon.png" >
-                <span style="margin-left:10px">{{label.lname}}</span>
+                <span style="margin-left:10px">{{label.name.split('.')[0]}}</span>
             </div>
         </div>
     </div>
@@ -43,8 +43,9 @@ export default {
         this.buttons = buttons
 
         let labels = getFile(app, _.get(this.config,'config.content.items'))
-        this.labels = labels
-        this.count = labels.length
+        this.labels = labels.list
+        console.log('====labels',labels)
+        this.count = labels.list.length
         
         let row = _.get(this.config,'config.content.row')
         let column = _.get(this.config,'config.content.column')
@@ -141,9 +142,9 @@ export default {
             }
         },
 
-        tapHandler(index){
-            
-            this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{index:index,songs:this.labels}})
+        tapHandler(index){ 
+            let rindex = (this.curPage-1)*this.pageSize +index 
+            this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{index:rindex,songs:this.labels}})
              
         }
 

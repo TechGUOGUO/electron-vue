@@ -71,32 +71,6 @@
         :key= "page.name"
         :pageParam="currentPageParams">
       </AudioPage> 
-      <ExamPage 
-        v-if="page.type=='exam'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name"
-        :pageParam="currentPageParams">
-      </ExamPage> 
-      <ResultPage 
-        v-if="page.type=='result'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name"
-        :param="currentPageParams">
-      </ResultPage> 
-      <DownloadPage 
-        v-if="page.type=='download'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name">
-      </DownloadPage> 
     </template>
   </div>
 </template>
@@ -111,9 +85,6 @@ import Pic3DPage  from './components/Pic3DPage'
 import PicPage from './components/PicPage'
 import BtnListPage from './components/BtnListPage'
 import AudioPage from './components/AudioPage'
-import ExamPage from './components/ExamPage'
-import ResultPage from './components/ResultPage'
-import DownloadPage from './components/DownloadPage'
 
 const {app} = window.electron.remote
 const config = getConfig(app)
@@ -155,10 +126,7 @@ export default {
     PicPage,
     VideoListPage,
     BtnListPage,
-    AudioPage,
-    ExamPage,
-    ResultPage,
-    DownloadPage
+    AudioPage
   }
 
 }

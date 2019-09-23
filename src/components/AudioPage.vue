@@ -44,26 +44,12 @@ export default {
         visibleStyle(){
             return this.visible ? '' : 'display:none'
         },
-        // qrcodeimg(){
-        //     if(this.playUrl){
-        //         QRCode.toDataURL(this.playUrl, function (err, url) {
-        //             console.log(url)
-        //             return url
-        //         })
-        //     }else{
-        //          return null
-        //     }
-           
-        // },
+        
         playUrl(){
             if(this.currentIndex>-1){
-                let song = this.songs[this.currentIndex]
-                let path = resolveAssets(app,song.toParams)
-                 QRCode.toDataURL(path, (err, url) =>{
-                    console.log(url)
-                    this.qrcodeimg = url
-                   // return url
-                })
+                let song = this.songs[this.currentIndex] 
+                let path = resolveAssets(app,'./content/'+song.name);
+              
                 return path
             }else{
                 return ''
@@ -135,6 +121,15 @@ export default {
        pageParam(val){
            this.currentIndex = val.index;
            this.songs = val.songs
+       },
+       currentIndex(val){
+           let song = this.songs[val] 
+           if(song){ 
+               QRCode.toDataURL(`http://www.guoyingxu.com/download/music?name=${song.name}&url=${song.url}`, (err, url) =>{
+                   console.log(url)
+               this.qrcodeimg = url 
+            })
+           }
        }
     },
 
