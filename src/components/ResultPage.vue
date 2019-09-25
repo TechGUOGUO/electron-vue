@@ -4,12 +4,10 @@
             <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
         </template>
 
-        <div style="position:absolute;top:50px;left:50px;color:white;z-index:100">
-            {{result.course}}
-            {{result.score}}
-            {{result.right}}
-            {{result.wrong}}
-        </div>
+            <!-- {{result.course}} -->
+            <div :style="'font-size:45px;position:absolute;top:'+rh(418)+';left:'+rw(1014)+';color:white;z-index:100'">{{result.score}}</div>
+           <div :style="'font-size:45px;position:absolute;top:'+rh(550)+';left:'+rw(685)+';color:white;z-index:100'"> {{result.right}}</div>
+           <div :tyle="'font-size:45px;position:absolute;top:'+rh(550)+';left:'+rw(1259)+';color:white;z-index:100'"> {{result.wrong}}</div>
 
         <img draggable="false" class="bg" :src="bg">
     </div>
@@ -17,7 +15,7 @@
 
 <script>
 import _ from 'lodash'
-import {resolveAssets} from '../utils/utils'
+import {resolveAssets,rw,rh} from '../utils/utils'
 import EButton  from '../components/EButton'
 const {app} = window.electron.remote
  
@@ -32,7 +30,9 @@ export default {
                 score:0,
                 right:0,
                 wrong:0
-            }
+            },
+            rh:rh,
+            rw:rw
         }
     },
     mounted(){

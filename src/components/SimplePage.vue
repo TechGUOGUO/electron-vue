@@ -3,21 +3,25 @@
         <template v-for="(button,index) in buttons">
             <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
         </template>
+        <img v-if="qr" draggable="false" :style="qrimg" :src="qrcodeimg">
         <img draggable="false" class="bg" :src="bg">
     </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import {resolveAssets} from '../utils/utils'
+import {resolveAssets,rw,rh} from '../utils/utils'
 import EButton  from '../components/EButton'
+import * as  QRCode  from 'qrcode'
 const {app} = window.electron.remote
 export default {
     props:['config',"visible",'from'],
     data(){
         return {
             bg:null,
-            buttons:[]
+            buttons:[],
+            qr:null,
+             qrcodeimg:null
         }
     },
     mounted(){
@@ -25,11 +29,31 @@ export default {
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
-
+        this.qr = _.get(this.config,'config.qr')
+        if(this.qr){
+                QRCode.toDataURL(this.qr.url, (err, url) =>{
+                                console.log(url)
+                   this.qrcodeimg = url 
+                })
+        }
     },
     computed:{
       visibleStyle(){
           return this.visible ? '' : 'display:none'
+      },
+      qrimg(){
+          if(!this.qr) return ''
+            let list = []
+            list.push('position:absolute')
+          
+            list.push(`left:${rw(_.get(this.config,'config.qr.x'))}`)
+            list.push(`top:${rh(_.get(this.config,'config.qr.y'))}`)
+            list.push(`width:${rw(_.get(this.config,'config.qr.width'))}`)
+            list.push(`height:${rh(_.get(this.config,'config.qr.height'))}`)
+            list.push('z-index:1')
+            let style = list.join(';')
+            console.log(style)
+            return style    
       }
     },
     methods:{

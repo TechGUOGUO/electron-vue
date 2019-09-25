@@ -6,8 +6,8 @@
         </template>
 
         <div :style="contentStyle" v-if="currentQuestion">
-            <div style="padding-top:15px"    v-bind:key="index" >           
-                <span style="font-weight:600">{{currentQuestion.title}}</span>
+            <div style="padding-top:15px"    >           
+                <div style="font-weight:600;padding-bottom:50px">{{currentQuestion.title}}</div>
                 <div :style="optionStyle+';'+(this.selected == 'A' ? 'color:red' : '')"    @click="tapHandler('A')"  >
                   A. {{currentQuestion.optiona}}
                 </div> 
@@ -111,7 +111,7 @@ export default {
 
             list.push(`left:${rw(_.get(this.config,'config.content.x'))}`)
             list.push(`top:${rh(_.get(this.config,'config.content.y'))}`)
-            list.push(`wight:${rh(_.get(this.config,'config.content.width'))}`)
+            list.push(`width:${rh(_.get(this.config,'config.content.width'))}`)
             list.push(`height:${rh(_.get(this.config,'config.content.height'))}`)
 
             list.push(`z-index:${this.zIndex||1}`)
@@ -122,8 +122,9 @@ export default {
 
         optionStyle(){
             let list = []
-
+            
             list.push(`margin:${rw(_.get(this.config,'config.content.margin'))}`) 
+            list.push(`padding-bottom:20px`) 
             let style = list.join(';')
             //console.log(style)
             return style    
