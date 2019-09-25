@@ -10,7 +10,6 @@
 <script>
     import autoplay from './mixins/autoplay'
     import Controls from './Controls.vue'
-    import Slide from './Slide.vue'
 
     const noop = () => {
     }
@@ -19,7 +18,6 @@
         name: 'carousel3d',
         components: {
             Controls,
-            Slide
         },
         props: {
             count: {
