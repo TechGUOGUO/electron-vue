@@ -5,14 +5,21 @@
             <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
         </template>
 
-        <div :style="contentStyle">
-            <div style="padding-top:15px" v-for="(question,index) in curQuestions" v-bind:key="index" >           
-                <span style="font-weight:600">{{question.title}}</span>
-                <div :style="optionStyle"  v-for="option in question.options" v-bind:key="option.NO" @click="tapHandler(index,option.NO)"  >
-                    {{option.NO}}.{{option.text}}
-                </div>
-
-                
+        <div :style="contentStyle" v-if="currentQuestion">
+            <div style="padding-top:15px"    v-bind:key="index" >           
+                <span style="font-weight:600">{{currentQuestion.title}}</span>
+                <div :style="optionStyle+';'+(this.selected == 'A' ? 'color:red' : '')"    @click="tapHandler('A')"  >
+                  A. {{currentQuestion.optiona}}
+                </div> 
+                 <div :style="optionStyle+';'+(this.selected == 'B' ? 'color:red' : '')"   @click="tapHandler('B')"  >
+                  B. {{currentQuestion.optionb}}
+                </div> 
+                 <div :style="optionStyle+';'+(this.selected == 'C' ? 'color:red' : '')"    @click="tapHandler('C')"  >
+                   C. {{currentQuestion.optionc}}
+                </div> 
+                 <div :style="optionStyle+';'+(this.selected == 'D' ? 'color:red' : '')"  @click="tapHandler('D')"  >
+                   D. {{currentQuestion.optiond}}
+                </div> 
             </div>
         </div>
 
@@ -23,7 +30,7 @@
 
 <script>
 import _ from 'lodash'
-import {resolveAssets,getFile,rw,rh} from '../utils/utils'
+import {resolveAssets,getFile,rw,rh,randomArray} from '../utils/utils'
 import EButton  from '../components/EButton'
 const {app} = window.electron.remote
  
@@ -31,57 +38,50 @@ export default {
     props:['config',"visible",'from',"pageParam"],
     data(){
         return {
+            answers:[],
+            questions:[],
             bg:null,
             buttons:[],
             course:null,
-            questions:[],
-
-            pageSize:null,
-            curPage:1,
+            pageSize:1,
             pages:null,
             curQuestions:[],
-            count:null,
-            result:[]
+            count:0,
+            result:[],
+            currentQuestion:null,
+            selected:''
         }
     },
-    mounted(){
-        console.log(this.config)
+    mounted(){ 
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
-
-        let pageSize = _.get(this.config,'config.content.pageSize')
-        this.pageSize = pageSize
-
+        let qs = getFile(app, _.get(this.config,'config.content.items'))
+        this.questions = qs.list; 
+        this.course = this.pageParam == "2" ? '文科' :'理科'
+        this.curQuestions =randomArray(this.questions,5)
+        this.count = 0
+        this.pages = this.curQuestions.length 
+        this.currentQuestion = this.curQuestions[this.count]
+        console.log(this.curQuestions, this.count,this.currentQuestion)       
     },
      watch:{
-        pageParam(val){
-            if(typeof(val)!="string"){
-                return
-            }
-            let file = getFile(app, val)
-            console.log(file)
-            if(file.error){
-                this.course = ''
-                this.questions=[]
-                this.curQuestions=[]
-            }else{
-                this.course = file.course
-                this.questions = file.questions
-                this.count = this.questions.length
-                this.pages = Math.ceil(this.count/this.pageSize)
-
-                if(this.count<this.pageSize){
-                    this.curQuestions = this.questions
-                }else{
-                    this.curQuestions = this.questions.slice(0,this.pageSize)
-                }
-            }
-            
+         count(val){
+             this.currentQuestion  = this.curQuestions[val]
+             console(this.currentQuestion)
+         },
+        pageParam(val){ 
+            console.log("================val")
+           let qs = getFile(app, _.get(this.config,'config.content.items'))
+            this.questions = qs.list; 
+            this.course =  val == 2 ? '文科' :'理科'
+            this.count = 0
+            this.curQuestions =randomArray(this.questions)
+            this.pages = this.curQuestions.length
         }
     },
 
-    computed:{
+    computed:{ 
         visibleStyle(){
             return this.visible ? '' : 'display:none'
         },
@@ -146,15 +146,17 @@ export default {
                     this.$emit('routeTo',this.from)
                 }else{
 
-                    if(e.options.action == 'pre' && this.curPage > 1){
-                        this.curPage = this.curPage - 1
-                    }else if(e.options.action == 'next' && this.curPage < this.pages){
-                        this.curPage = this.curPage + 1
+                    if(e.options.action == 'pre' && this.count > 0){
+                        this.count = this.count - 1
+                        this.selected = this.answers[this.count]
+                    }else if(e.options.action == 'next' && this.count < this.pages-1){
+                        this.count = this.count + 1
+                        this.selected = ''
                     }
 
-                    let start = (this.curPage-1)*this.pageSize
-                    let end = this.curPage * this.pageSize
-                    this.curQuestions = this.questions.slice(start,end)
+                    // let start = (this.curPage-1)*this.pageSize
+                    // let end = this.curPage * this.pageSize
+                    // this.curQuestions = this.questions.slice(start,end)
                 }
 
              }
@@ -165,32 +167,31 @@ export default {
                 this.$emit('routeTo',c.to)
             }
         },
-        tapHandler(index,NO){
-            
-            console.log(index,NO)
-            this.questions[index].selectedNO = NO
-            console.log(this.questions)
-
+        tapHandler(sa){
+            this.selected = sa
+            this.answers[this.count] = sa
         },
         computeScore(){
             let result = {
                 course:this.course,
                 score:0,
                 right:0,
-                wrong:0
+                wrong:0,
+                qusetions: [...this.curQuestions],
+                answers: [...this.answers]
             }
 
-            for(let i=0;i<this.questions.length;i++){
-                let question = this.questions[i]
-                let selected = _.get(question,'selectedNO')
+            for(let i=0;i<this.curQuestions.length;i++){
+                let question = this.curQuestions[i]
+
+                let selected = this.answers[i]
                 let answer = _.get(question,'answer')
                 if(selected == answer){
-                    result.score = result.score + question.score
+                    result.score = result.score + 20
                     result.right = result.right + 1
                 }
             }
-            result.wrong = this.questions.length - result.right
-            console.log(result)
+            result.wrong = this.curQuestions.length - result.right
 
             return result
 

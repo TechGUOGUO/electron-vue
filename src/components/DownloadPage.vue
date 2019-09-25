@@ -46,7 +46,7 @@ export default {
         this.buttons = buttons
 
         let labels = getFile(app, _.get(this.config,'config.content.items'))
-        this.labels = labels
+        this.labels = labels.list
         this.count = labels.length
         
         this.pageSize = _.get(this.config,'config.content.pageSize')
