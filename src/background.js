@@ -21,7 +21,7 @@ if(isDevelopment){
   staticFolder = join(app.getAppPath(),'../../assets_config')
 }
 // app.setName('清镇法条');
-app.setName('遵义查询机')
+app.setName('gaokao')
 app.setPath('appData',staticFolder)
 
 // Scheme must be registered before the app is ready
@@ -29,7 +29,7 @@ protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true
 
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({ width: 1920, height: 1080, frame:false,fullscreen: isDevelopment ? false :true , webPreferences: {
+  win = new BrowserWindow({ width: 1366, height: 768, frame:true,fullscreen: isDevelopment ? false :true , webPreferences: {
     nodeIntegration: true,
     webSecurity:false,
 
@@ -37,10 +37,10 @@ function createWindow () {
     webviewTag:true
   } })
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
+  if (process.env.WEBPACK_DEV_SERVER_URL) { 
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+   if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development

@@ -10,14 +10,13 @@
 <script>
     import autoplay from './mixins/autoplay'
     import Controls from './Controls.vue'
-
     const noop = () => {
     }
 
     export default {
         name: 'carousel3d',
         components: {
-            Controls,
+            Controls
         },
         props: {
             count: {

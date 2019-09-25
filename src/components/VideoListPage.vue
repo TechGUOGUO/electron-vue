@@ -19,7 +19,7 @@
 
 <script>
 import _ from 'lodash'
-import {resolveAssets,rw,rh} from '../utils/utils'
+import {resolveAssets,rw,rh, resolveFolder} from '../utils/utils'
 import EButton  from '../components/EButton'
 import Thumbnail from './Thumbnail'
 import fs  from 'fs'
@@ -103,7 +103,7 @@ export default {
       },
         videos(){
           if(this.config){
-             let folder = resolveAssets(app,_.get(this.config,'config.videos'))
+             let folder = resolveFolder(app,_.get(this.config,'config.videos'))
               let p = []
             try{
                let temp= fs.readdirSync(folder)  
