@@ -59,7 +59,7 @@ export default {
     methods:{
         buttonHandler(e){
             if(e.type=="routeTo"){
-                this.$emit('routeTo',e.options.path)
+                this.$emit('routeTo',{path:e.options.path,param:e.options.param})
             }
             if(e.type=="actionTo"){
                 this.$emit('routeTo',e.options.action === 'back' ?this.from : '')

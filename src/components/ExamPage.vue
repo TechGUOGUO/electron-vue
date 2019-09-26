@@ -2,22 +2,22 @@
     <div class="bundlePage" :style="visibleStyle" @click="fullClick"> 
         <div :style="courseStyle">{{course}}</div>
         <template v-for="(button,index) in buttons">
-            <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
+            <EButton :currentIndex='count' :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
         </template>
 
         <div :style="contentStyle" v-if="currentQuestion">
             <div style="padding-top:15px"    >           
                 <div style="font-weight:600;padding-bottom:50px">{{currentQuestion.title}}</div>
-                <div :style="optionStyle+';'+(this.selected == 'A' ? 'color:red' : '')"    @click="tapHandler('A')"  >
+                <div :style="optionStyle+';'+(this.selected == 'A' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='A' ? 'color:rgb(78,255,0)':'')"    @click="tapHandler('A')"  >
                   A. {{currentQuestion.optiona}}
                 </div> 
-                 <div :style="optionStyle+';'+(this.selected == 'B' ? 'color:red' : '')"   @click="tapHandler('B')"  >
+                 <div :style="optionStyle+';'+(this.selected == 'B' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='B' ? 'color:rgb(78,255,0)':'')"   @click="tapHandler('B')"  >
                   B. {{currentQuestion.optionb}}
                 </div> 
-                 <div :style="optionStyle+';'+(this.selected == 'C' ? 'color:red' : '')"    @click="tapHandler('C')"  >
+                 <div :style="optionStyle+';'+(this.selected == 'C' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='C' ? 'color:rgb(78,255,0)':'')"    @click="tapHandler('C')"  >
                    C. {{currentQuestion.optionc}}
                 </div> 
-                 <div :style="optionStyle+';'+(this.selected == 'D' ? 'color:red' : '')"  @click="tapHandler('D')"  >
+                 <div :style="optionStyle+';'+(this.selected == 'D' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='D' ? 'color:rgb(78,255,0)':'')"  @click="tapHandler('D')"  >
                    D. {{currentQuestion.optiond}}
                 </div> 
             </div>
@@ -49,35 +49,67 @@ export default {
             count:0,
             result:[],
             currentQuestion:null,
-            selected:''
+            selected:'',
+            clickenable :true,
+            rr:''
         }
     },
     mounted(){ 
+        console.log('mountend')
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
-        let qs = getFile(app, _.get(this.config,'config.content.items'))
-        this.questions = qs.list; 
-        this.course = this.pageParam == "2" ? '文科' :'理科'
-        this.curQuestions =randomArray(this.questions,5)
-        this.count = 0
+        if(this.pageParam && this.pageParam.list){
+            this.curQuestions = this.pageParam.questions
+            this.answers = this.pageParam.answers
+            this.clickenable = false;
+            this.count = 0
+            this.selected = this.answers[this.count]
+            
+        }else{ 
+            let qs = getFile(app, _.get(this.config,'config.content.items'))
+            this.questions = qs.list; 
+            this.curQuestions =randomArray(this.questions,5)
+            this.clickenable =true
+            this.count = 0
+            this.answers = []
+            this.selected = '' 
+        }
+        this.course = this.pageParam &&  this.pageParam.type == "2" ? '文科' :'理科'
         this.pages = this.curQuestions.length 
         this.currentQuestion = this.curQuestions[this.count]
-        console.log(this.curQuestions, this.count,this.currentQuestion)       
+        this.rr = this.currentQuestion.answers
+
     },
      watch:{
-         count(val){
-             this.currentQuestion  = this.curQuestions[val]
-             console(this.currentQuestion)
-         },
+        count(val){
+             this.currentQuestion  = this.curQuestions[val] 
+             if(!this.clickenable){
+                 this.selected = this.answers[val]
+             }
+        },
         pageParam(val){ 
-            console.log("================val")
-           let qs = getFile(app, _.get(this.config,'config.content.items'))
-            this.questions = qs.list; 
-            this.course =  val == 2 ? '文科' :'理科'
-            this.count = 0
-            this.curQuestions =randomArray(this.questions)
-            this.pages = this.curQuestions.length
+            console.log('-----------------------------------------------------pageparam',val)
+            if(val &&val.list){
+                this.curQuestions = val.list
+                this.count = 0
+                this.answers = val.answers
+                this.clickenable =false
+                 this.selected = this.answers[this.count]
+            }else{
+
+                this.clickenable =true
+                let qs = getFile(app, _.get(this.config,'config.content.items'))
+                this.questions = qs.list; 
+                this.curQuestions =randomArray(this.questions,5)
+                this.answers = []
+                this.count = 0
+                 this.selected = ''
+            }
+            this.course =val && val.type == "2" ? '文科' :'理科'
+            this.pages = this.curQuestions.length 
+            this.currentQuestion = this.curQuestions[this.count]
+            this.rr = this.currentQuestion.answer
         }
     },
 
@@ -121,8 +153,7 @@ export default {
         },
 
         optionStyle(){
-            let list = []
-            
+            let list = [] 
             list.push(`margin:${rw(_.get(this.config,'config.content.margin'))}`) 
             list.push(`padding-bottom:20px`) 
             let style = list.join(';')
@@ -138,7 +169,7 @@ export default {
 
                 let result = this.computeScore()
                 this.$emit('routeTo',{path:e.options.path,param:result})
-
+                this.selected = ""
             }
 
             if(e.type=="actionTo"){
@@ -169,16 +200,19 @@ export default {
             }
         },
         tapHandler(sa){
-            this.selected = sa
-            this.answers[this.count] = sa
+            if(this.clickenable){
+                this.selected = sa
+               this.answers[this.count] = sa
+            }
         },
         computeScore(){
             let result = {
                 course:this.course,
+                type:    this.course ==  '文科'  ? '2':'3',
                 score:0,
                 right:0,
                 wrong:0,
-                qusetions: [...this.curQuestions],
+                list: [...this.curQuestions],
                 answers: [...this.answers]
             }
 

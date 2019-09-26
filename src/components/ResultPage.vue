@@ -5,9 +5,9 @@
         </template>
 
             <!-- {{result.course}} -->
-            <div :style="'font-size:45px;position:absolute;top:'+rh(418)+';left:'+rw(1014)+';color:white;z-index:100'">{{result.score}}</div>
-           <div :style="'font-size:45px;position:absolute;top:'+rh(550)+';left:'+rw(685)+';color:white;z-index:100'"> {{result.right}}</div>
-           <div :tyle="'font-size:45px;position:absolute;top:'+rh(550)+';left:'+rw(1259)+';color:white;z-index:100'"> {{result.wrong}}</div>
+            <div :style="'font-size:45px;position:absolute;top:'+rh(418)+';left:'+rw(1014)+';color:white;z-index:100'">{{result && result.score}}</div>
+           <div :style="'font-size:45px;position:absolute;top:'+rh(550)+';left:'+rw(685)+';color:white;z-index:100'"> {{result &&result.right}}</div>
+           <div :style="'font-size:45px;position:absolute;top:'+rh(550)+';left:'+rw(1259)+';color:white;z-index:100'"> {{result &&result.wrong}}</div>
 
         <img draggable="false" class="bg" :src="bg">
     </div>
@@ -69,7 +69,11 @@ export default {
 
             }
             if(e.type=="actionTo"){
-                this.$emit('routeTo',e.options.action === 'back' ?this.from : '')
+                if(e.options.action == 'review'){
+                    this.$emit('routeTo',{path:'exam',param:this.result})
+                }else{
+                    this.$emit('routeTo',e.options.action === 'back' ?this.from : '')
+                }
             }
         },
 

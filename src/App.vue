@@ -131,12 +131,15 @@ export default {
       if(typeof options === 'string'){
         this.from = this.currentPage;
         this.currentPage = options
+        this.currentPageParams ={}
       }else{
-          this.from = this.currentPage;
+        this.from = this.currentPage;
         this.currentPage = options.path;
         this.currentPageParams = options.param
+
+        console.log(this.currentPageParams)
       }
-      console.log(options)
+      console.log("routeTo",options)
     }
   },
   mounted(){  

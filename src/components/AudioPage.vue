@@ -125,7 +125,7 @@ export default {
        currentIndex(val){
            let song = this.songs[val] 
            if(song){ 
-               QRCode.toDataURL(`http://www.guoyingxu.com/download/music?name=${song.name}&url=${song.url}`, (err, url) =>{
+               QRCode.toDataURL(`http://www.guoyingxu.com/download/music?name=${encodeURI(song.name)}&url=${encodeURI(song.url)}`, (err, url) =>{
                    console.log(url)
                this.qrcodeimg = url 
             })

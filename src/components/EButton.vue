@@ -1,5 +1,5 @@
 <template>
-    <div :style="imageStyle" @mousedown="clickHandler" @mouseleave="leaveHandler" @mouseup="upHandler">
+    <div v-if="visible" :style="imageStyle" @mousedown="clickHandler" @mouseleave="leaveHandler" @mouseup="upHandler">
         <img draggable="false" v-if="!isPressDown" width="100%" height="100%" :src="normalUrl" > 
         <img draggable="false" v-if="isPressDown" width ='100%' height="100%" :src="pressedUrl" >
     </div>
@@ -9,11 +9,37 @@ import {resolveAssets,rw,rh} from '../utils/utils'
 import _ from 'lodash'
 const {app} = window.electron.remote
 export default {
-    props:['config','zIndex'],
+    props:['config','zIndex','currentIndex'],
     data(){
         return {
             isPressDown:false,
+            visible:true
         } 
+    },
+    mounted(){
+        if(this.config.visible){
+                if(this.config.visible.type=="大于等于"){
+                    this.visible =  this.currentIndex>=this.config.visible.value
+                }
+                if(this.config.visible.type=="小于等于"){
+                    this.visible= this.currentIndex<=this.config.visible.value
+                }
+            }
+    },
+    watch:{
+        currentIndex(val){
+            console.log(val)
+            if(this.config.visible){
+                if(this.config.visible.type=="大于等于"){
+                    console.log(val, this.config.visible.value)
+                    this.visible =  val>=this.config.visible.value
+                }
+                if(this.config.visible.type=="小于等于"){
+                       console.log(val, this.config.visible.value)
+                    this.visible= val<=this.config.visible.value
+                }
+            }
+        }
     },
     computed:{
         normalUrl(){
