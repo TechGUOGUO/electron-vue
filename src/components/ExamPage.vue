@@ -69,7 +69,7 @@ export default {
         }else{ 
             let qs = getFile(app, _.get(this.config,'config.content.items'))
             this.questions = qs.list; 
-            this.curQuestions =randomArray(this.questions,5)
+            this.curQuestions =randomArray(this.questions,5,this.pageSize && this.pageSize.type)
             this.clickenable =true
             this.count = 0
             this.answers = []
@@ -101,7 +101,7 @@ export default {
                 this.clickenable =true
                 let qs = getFile(app, _.get(this.config,'config.content.items'))
                 this.questions = qs.list; 
-                this.curQuestions =randomArray(this.questions,5)
+                this.curQuestions =randomArray(this.questions,5,val&&val.type)
                 this.answers = []
                 this.count = 0
                  this.selected = ''

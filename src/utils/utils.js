@@ -53,7 +53,7 @@ export function rh(num){
     return Math.floor(num *  document.getElementById('app').clientHeight/ screenHeight)+'px'
 }
 
-export function randomArray(source,num){
+export function randomArray(source,num,type){
     console.log('===random',source,num)
     if(source.length <= num){
         return [...source]
@@ -68,7 +68,7 @@ export function randomArray(source,num){
         res.push(item)
         n--;
     }
-    return res
+    return res.filter(it=>it.bankId==type)
 }
 export function getFile(app,filePath){
     const path =join(app.getPath('appData'),app.getName(),filePath)
