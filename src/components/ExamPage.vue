@@ -6,19 +6,23 @@
         </template>
 
         <div :style="contentStyle" v-if="currentQuestion">
-            <div style="padding-top:15px"    >           
-                <div style="font-weight:600;padding-bottom:50px">{{currentQuestion.title}}</div>
+            <div style="padding-top:15px"  >           
+                <div style="font-weight:600;padding-bottom:50px">
+                    {{currentQuestion.title}}
+                <MathJaxText :txl="currentQuestion.title" :useMathjax = "true"></MathJaxText>
+                    </div>
                 <div :style="optionStyle+';'+(this.selected == 'A' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='A' ? 'color:rgb(78,255,0)':'')"    @click="tapHandler('A')"  >
-                  A. {{currentQuestion.optiona}}
+                  <!-- A. {{currentQuestion.optiona}} -->
+                <MathJaxText opt="A" :txl="currentQuestion.optiona" :useMathjax = "true"></MathJaxText>
                 </div> 
                  <div :style="optionStyle+';'+(this.selected == 'B' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='B' ? 'color:rgb(78,255,0)':'')"   @click="tapHandler('B')"  >
-                  B. {{currentQuestion.optionb}}
+                    <MathJaxText opt="B" :txl="currentQuestion.optionb" :useMathjax = "true"></MathJaxText>
                 </div> 
                  <div :style="optionStyle+';'+(this.selected == 'C' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='C' ? 'color:rgb(78,255,0)':'')"    @click="tapHandler('C')"  >
-                   C. {{currentQuestion.optionc}}
+                <MathJaxText opt="C" :txl="currentQuestion.optionc" :useMathjax = "true"></MathJaxText>
                 </div> 
                  <div :style="optionStyle+';'+(this.selected == 'D' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='D' ? 'color:rgb(78,255,0)':'')"  @click="tapHandler('D')"  >
-                   D. {{currentQuestion.optiond}}
+                <MathJaxText opt="D" :txl="currentQuestion.optiond" :useMathjax = "true"></MathJaxText>
                 </div> 
             </div>
         </div>
@@ -32,6 +36,7 @@
 import _ from 'lodash'
 import {resolveAssets,getFile,rw,rh,randomArray} from '../utils/utils'
 import EButton  from '../components/EButton'
+import MathJaxText from './MathJaxText'
 const {app} = window.electron.remote
  
 export default {
@@ -78,6 +83,9 @@ export default {
         this.course = this.pageParam &&  this.pageParam.type == "2" ? '文科' :'理科'
         this.pages = this.curQuestions.length 
         this.currentQuestion = this.curQuestions[this.count]
+        this.$nextTick(()=>{
+
+        })
         this.rr = this.currentQuestion.answers
 
     },
@@ -239,7 +247,8 @@ export default {
    
 
     components:{
-        EButton
+        EButton,
+        MathJaxText
     }
 }
 </script>

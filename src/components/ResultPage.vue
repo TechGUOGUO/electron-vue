@@ -47,8 +47,6 @@ export default {
       visibleStyle(){
           return this.visible ? '' : 'display:none'
       },
- 
-
     },
 
     watch:{
@@ -66,7 +64,6 @@ export default {
                 }else{
                     this.$emit('routeTo',e.options.path)
                 }
-
             }
             if(e.type=="actionTo"){
                 if(e.options.action == 'review'){
