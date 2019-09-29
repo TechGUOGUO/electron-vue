@@ -78,7 +78,7 @@ export default {
         this.course = this.pageParam &&  this.pageParam.type == "2" ? '文科' :'理科'
         this.pages = this.curQuestions.length 
         this.currentQuestion = this.curQuestions[this.count]
-        this.rr = this.currentQuestion.answers
+        this.rr =this.currentQuestion && this.currentQuestion.answers
 
     },
      watch:{
@@ -109,7 +109,7 @@ export default {
             this.course =val && val.type == "2" ? '文科' :'理科'
             this.pages = this.curQuestions.length 
             this.currentQuestion = this.curQuestions[this.count]
-            this.rr = this.currentQuestion.answer
+            this.rr = this.currentQuestion && this.currentQuestion.answer
         }
     },
 

@@ -59,6 +59,7 @@ export function randomArray(source,num,type){
         return [...source]
     }
     let temp = [...source];
+    temp = temp.filter(it=>it.bankId==type)
     let res = [];
     let n = num;
     while(n>0){
@@ -68,7 +69,7 @@ export function randomArray(source,num,type){
         res.push(item)
         n--;
     }
-    return res.filter(it=>it.bankId==type)
+    return res
 }
 export function getFile(app,filePath){
     const path =join(app.getPath('appData'),app.getName(),filePath)
