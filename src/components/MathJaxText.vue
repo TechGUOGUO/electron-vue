@@ -14,6 +14,7 @@ export default {
       out.innerHTML = '';
       MathJax.texReset();
       var options = MathJax.getMetricsFor(out); 
+        options.display=false;
       MathJax.tex2chtmlPromise(this.txl, options).then(function (node) {
         out.appendChild(node);
         MathJax.startup.document.clear();
