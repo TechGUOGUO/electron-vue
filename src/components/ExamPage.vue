@@ -8,20 +8,20 @@
         <div :style="contentStyle" v-if="currentQuestion">
             <div style="padding-top:15px"  >           
                 <div style="font-weight:600;padding-bottom:50px">
-                <MathJaxText :txl="currentQuestion.title" :useMathjax = "true"></MathJaxText>
+                <MathJaxText :txl="currentQuestion.title" :useMathjax = "course=='理科'"></MathJaxText>
                     </div>
                 <div :style="optionStyle+';'+(this.selected == 'A' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='A' ? 'color:rgb(78,255,0)':'')"    @click="tapHandler('A')"  >
                   <!-- A. {{currentQuestion.optiona}} -->
-                <MathJaxText opt="A" :txl="currentQuestion.optiona" :useMathjax = "true"></MathJaxText>
+                <MathJaxText opt="A" :txl="currentQuestion.optiona" :useMathjax = "course=='理科'"></MathJaxText>
                 </div> 
                  <div :style="optionStyle+';'+(this.selected == 'B' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='B' ? 'color:rgb(78,255,0)':'')"   @click="tapHandler('B')"  >
-                    <MathJaxText opt="B" :txl="currentQuestion.optionb" :useMathjax = "true"></MathJaxText>
+                    <MathJaxText opt="B" :txl="currentQuestion.optionb" :useMathjax = "course=='理科'"></MathJaxText>
                 </div> 
                  <div :style="optionStyle+';'+(this.selected == 'C' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='C' ? 'color:rgb(78,255,0)':'')"    @click="tapHandler('C')"  >
-                <MathJaxText opt="C" :txl="currentQuestion.optionc" :useMathjax = "true"></MathJaxText>
+                <MathJaxText opt="C" :txl="currentQuestion.optionc" :useMathjax = "course=='理科'"></MathJaxText>
                 </div> 
                  <div :style="optionStyle+';'+(this.selected == 'D' ? 'color:red' : '') +';'+(!this.clickenable&&this.rr=='D' ? 'color:rgb(78,255,0)':'')"  @click="tapHandler('D')"  >
-                <MathJaxText opt="D" :txl="currentQuestion.optiond" :useMathjax = "true"></MathJaxText>
+                <MathJaxText opt="D" :txl="currentQuestion.optiond" :useMathjax = "course=='理科'"></MathJaxText>
                 </div> 
             </div>
         </div>
