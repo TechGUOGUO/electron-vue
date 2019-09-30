@@ -5,11 +5,18 @@
   </div>
 </template>
 <script> 
+function useMathJax(txl){
+  if(txl.indexOf('\\')>=0 || txl.indexOf('^')>=0 || txl.indexOf('{')>=0){
+    return true
+  }else {
+    return false
+  }
+}
 export default {
   props:['opt','txl','useMathjax'],
   mounted(){
      let out = this.$refs.out
-    if(this.useMathjax == true){
+    if(useMathjax(this.txl) == true){
       const MathJax = window.MathJax;
       out.innerHTML = '';
       MathJax.texReset();
@@ -38,7 +45,7 @@ export default {
   watch:{
     txl(val){
        let out = this.$refs.out
-    if(this.useMathjax == true){
+    if(useMathjax(val) == true){
       const MathJax = window.MathJax;
       out.innerHTML = '';
       MathJax.texReset();
