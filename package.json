@@ -23,6 +23,7 @@
     "vue": "^2.6.10",
     "vue-agile": "^1.0.11",
     "vue-carousel-3d": "^0.2.0",
+    "vue-mathjax": "0.0.11",
     "vue-pdf": "^4.0.7"
   },
   "devDependencies": {
