@@ -1,8 +1,0 @@
-{"list":[
-  {"title":"测试数学公式$\\sum_{i=0}^N\\int_{a}^{b}g(t,i)\\text{d}t$","optiona":"\\max(A,B,C)","soptionb":"\\frac{a}{b}","optionc":"x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}","optiond":"x = {-b +\\sqrt{b^2-4ac} \\over 2a}","answer":"B","bankId":2},{"title":"题目11112","optiona":"1","optionb":"2","optionc":"3","optiond":"5","answer":"B","bankId":2},
-  {"title":"题目11113","optiona":"1","optionb":"2","optionc":"3","optiond":"5","answer":"B","bankId":2},
-  {"title":"题目11114","optiona":"1","optionb":"2","optionc":"3","optiond":"5","answer":"B","bankId":2},
-  {"title":"题目11115","optiona":"1","optionb":"2","optionc":"3","optiond":"5","answer":"B","bankId":2},
-  {"title":"题目11116","optiona":"1","optionb":"2","optionc":"3","optiond":"5","answer":"B","bankId":2}
-
-  ]}
