@@ -34,10 +34,15 @@ export default {
           return this.visible ? '' : 'display:none'
       },
       url(){ 
-          return resolveAssets(app,this.pageParam)
+          console.log(this.pageParam)
+          if(typeof this.pageParam === 'string' && this.pageParam){
+              return resolveAssets(app,this.pageParam)
+          }else{
+              return ""
+          }
       },
     viewUrl(){ 
-        return `${resolvePlugins(app,'pdfjs/web/viewer.html')}?file=${this.url}`
+        return this.url ? `${resolvePlugins(app,'pdfjs/web/viewer.html')}?file=${this.url}` : ''
     }
     },
     methods:{
@@ -46,8 +51,8 @@ export default {
                 this.$emit('routeTo',e.options.path)
             }
             if(e.type=="actionTo"){
-                
-                this.$emit('routeTo',e.options.action === 'back' ?this.from : '')
+                let params = e.options.action ==='back' ? this.from : ''
+                this.$emit('routeTo',params)
             }
         },
         fullClick(){
