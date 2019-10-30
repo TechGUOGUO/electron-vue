@@ -86,4 +86,16 @@ export function getFile(app,filePath){
     return result
 }
 
- 
+export function getFolderContent(app,filePath){
+    const path = join(app.getPath('appData'),app.getName(),filePath)
+    let result = null
+    try{
+
+    }catch(e){
+        result = {
+            'error': 'parse error',
+            "message": e.toString()
+        }
+    }
+    return result
+}

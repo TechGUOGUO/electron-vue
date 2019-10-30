@@ -62,6 +62,14 @@
         @routeTo= "routeTo" 
         :key= "page.name">
       </BtnListPage> 
+      <ItemPagerListPage 
+        v-if="page.type=='pager_buttons'" 
+        :from="from"
+        :visible = "currentPage==page.name" 
+        :config = "page"  
+        @routeTo= "routeTo" 
+        :key= "page.name">
+      </ItemPagerListPage> 
       <AudioPage 
         v-if="page.type=='play'" 
         :from="from"
@@ -114,6 +122,7 @@ import AudioPage from './components/AudioPage'
 import ExamPage from './components/ExamPage'
 import ResultPage from './components/ResultPage'
 import DownloadPage from './components/DownloadPage'
+import ItemPagerListPage  from './components/ItemPagerListPage'
 const {app} = window.electron.remote
 const config = getConfig(app)
 export default {
@@ -160,7 +169,8 @@ export default {
     AudioPage,
     ExamPage,
     ResultPage,
-    DownloadPage
+    DownloadPage,
+    ItemPagerListPage
   }
 
 }
