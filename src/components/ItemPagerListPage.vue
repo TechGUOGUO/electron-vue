@@ -7,8 +7,8 @@
 
         <div :style="contentStyle">
             <div :style="labelStyle" v-for="(label,index) in curLabels" v-bind:key="index" @click="tapHandler(index)">           
-                <img draggable="false" width ='20px' height="20px" src="../assets/icon.png" >
-                <span style="margin-left:10px">{{label.name.split('.')[0]}}</span>
+                <img draggable="false" width ='224px'  height="220px" :src="icon" >
+                <span style="margin-top:-50px;text-stroke:1px #f0f0f0;text-shadow: 0.1em 0.1em 0.05em #333">{{label.name.split('.')[0]}}</span>
             </div>
         </div>
     </div>
@@ -16,7 +16,7 @@
 
 <script>
 import _ from 'lodash'
-import {resolveAssets,rw,rh,getFile} from '../utils/utils'
+import {resolveAssets,rw,rh,getFile,getFolderContent} from '../utils/utils'
 import EButton  from '../components/EButton'
 const {app} = window.electron.remote
 
@@ -33,7 +33,8 @@ export default {
             pages:null,
             curLabels:[],
             count:null,
-            column:null
+            column:null,
+            icon:null
         }
     },
     mounted(){
@@ -42,7 +43,17 @@ export default {
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
 
-        let labels = getFile(app, _.get(this.config,'config.content.items'))
+        let labels;
+        let contentType = _.get(this.config,'config.content.contentType')
+        if(contentType === 'readdir'){
+            labels = getFolderContent(app,_.get(this.config,'config.content.items'))
+        }else{
+            labels = getFile(app, _.get(this.config,'config.content.items'))
+        }
+        if(labels.error){
+            console.error(labels)
+            return 
+        }
         this.labels = labels.list
         console.log('====labels',labels)
         this.count = labels.list.length
@@ -59,7 +70,7 @@ export default {
             this.curLabels = this.labels.slice(0,this.pageSize)
         }
 
-         
+         this.icon = resolveAssets(app,_.get(this.config,'config.content.item.icon'))
     },
 
 
@@ -72,8 +83,8 @@ export default {
             let list = []
             list.push('position:absolute')
             list.push(`display:${_.get(this.config,'config.content.layout')}`)
-            list.push('flex-wrap:wrap')
-            list.push('align-content:space-between')
+            list.push('flex-wrap:nowrap')
+            list.push('align-content:space-around')
             list.push(`width:${rw(_.get(this.config,'config.content.width'))}`)
             // list.push(`height:${rh(this.config.height)}`)
             list.push(`left:${rw(_.get(this.config,'config.content.x'))}`)
@@ -86,26 +97,35 @@ export default {
 
         labelStyle(){
             let list = []
-            list.push('display:flex')
+            list.push('display:flex;flex-direction:column;flex:1')
             list.push(`color:${_.get(this.config,'config.content.item.color')}`)
             list.push(`font-size:${rw(_.get(this.config,'config.content.item.fontSize'))}`)
             list.push(`font-weight:${_.get(this.config,'config.content.item.fontWeight')}`)
             list.push(`justify-content:flex-start`)
             list.push('align-items:center')
-            list.push(`width:${rw(_.get(this.config,'config.content.item.w'))}`)
+           // list.push(`width:${rw(_.get(this.config,'config.content.item.w'))}`)
             list.push(`height:${rh(_.get(this.config,'config.content.item.h'))}`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
             return style    
-        }
-
+        },
+      
 
     },
     methods:{
         buttonHandler(e){
- 
+            console.log("=============",e.type)
+            if(e.type=="routeTo"){
+                this.$emit('routeTo',e.options.path)
+            }
+            
             if(e.type=="actionTo"){
+                if(e.options.action === 'back'){
 
+                    let params = e.options.action ==='back' ? this.from : ''
+                    this.$emit('routeTo',params)
+                    return 
+                }
                 if(e.options.action == 'pre' && this.curPage > 1){
                     this.curPage = this.curPage - 1
                 }else if(e.options.action == 'next' && this.curPage < this.pages){
@@ -130,7 +150,7 @@ export default {
                 let end = this.curPage * this.pageSize
                 this.curLabels = this.labels.slice(start,end)
 
-             }
+             } 
         },
 
         fullClick(){
@@ -142,7 +162,7 @@ export default {
 
         tapHandler(index){ 
             let rindex = (this.curPage-1)*this.pageSize +index 
-            this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{index:rindex,songs:this.labels}})
+            this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{index:rindex,list:this.labels}})
              
         }
 

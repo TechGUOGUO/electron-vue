@@ -90,7 +90,10 @@ export function getFolderContent(app,filePath){
     const path = join(app.getPath('appData'),app.getName(),filePath)
     let result = null
     try{
-
+        let list = fs.readdirSync(path)
+        result = {
+            list:list.map(f=>({name:f,url:path+'/'+f}))
+        }
     }catch(e){
         result = {
             'error': 'parse error',
