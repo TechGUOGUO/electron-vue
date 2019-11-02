@@ -170,7 +170,7 @@ export default {
              this.title = path.pname + "|"+ path.name;
              let autoGetData = _.get(this.config,'config.content.autoGetData')
              if(!autoGetData){
-                 this.labels = [];
+                this.labels = [];
                 this.count = 0;
                 this.row =1
                 this.column = 1;
@@ -185,24 +185,55 @@ export default {
                 console.error(labels)
                 return 
             }
-
-            this.labels =[
-                {
-                    name:'效果图',
-                    icon: this.getIcon('效果图'),
-                    url: _.find(labels.list,f=>f.name.indexOf('效果图')>=0).url
-                },
-                 {
-                    name:'简介',
-                    icon: this.getIcon('简介'),
-                    url: _.find(labels.list,f=>f.name.indexOf('简介')>=0).url
-                },
-                 {
-                    name:'宣传片',
-                    icon: this.getIcon('宣传片'),
-                    url: _.find(labels.list,f=>f.name.indexOf('宣传片')>=0).url
+            let t = []
+            labels.list.forEach(f=>{
+                console.log(f.name)
+                if(f.url.indexOf('.')<0){
+                    t.push({
+                        name:f.name,
+                        icon: this.getIcon('pic'),
+                        url: f.url,
+                        type:'folder'
+                    })
+                }else{
+                    let ext = f.url.split('.')[1]
+                    if(['mp4','mov'].indexOf(ext.toLowerCase())>=0){
+                        t.push({
+                            name: f.name,
+                            icon:this.getIcon('mp4'),
+                            url:f.url,
+                            type:'video'
+                        })
+                    }
+                    if(['pdf'].indexOf(ext.toLowerCase())>=0){
+                        t.push({
+                            name:f.name,
+                            icon: this.getIcon('pdf'),
+                            url:f.url,
+                            type: 'pdf'
+                        })
+                    }
                 }
-            ] 
+            })
+
+            this.labels = t ;
+            // [
+            //     {
+            //         name:'效果图',
+            //         icon: this.getIcon('效果图'),
+            //         url: _.find(labels.list,f=>f.name.indexOf('效果图')>=0).url
+            //     },
+            //      {
+            //         name:'简介',
+            //         icon: this.getIcon('简介'),
+            //         url: _.find(labels.list,f=>f.name.indexOf('简介')>=0).url
+            //     },
+            //      {
+            //         name:'宣传片',
+            //         icon: this.getIcon('宣传片'),
+            //         url: _.find(labels.list,f=>f.name.indexOf('宣传片')>=0).url
+            //     }
+            // ] 
             
             this.count = labels.list.length
             
@@ -212,24 +243,22 @@ export default {
             this.pageSize = row*column
             this.pages = Math.ceil(this.count/this.pageSize)
             this.curLabels = this.labels
-            console.log("======================@@@@@@@@@@@@@@@@",this.labels)
 
         },
 
         getIcon(name){
-            if(name=='简介'){
+            if(name=='pdf'){
                 return resolveAssets(app,'./按钮/简介按钮.png') 
             }
-            if(name=="效果图"){ 
+            if(name=="pic"){ 
                 return resolveAssets(app,'./按钮/效果图按钮.png') 
             }
-              if(name=='宣传片'){
+              if(name=='mp4'){
                 return resolveAssets(app,'./按钮/宣传片按钮.png') 
             }
             return ''
         },
         buttonHandler(e){
-            console.log("=============",e.type)
            
             if(e.type=="routeTo"){
              
@@ -281,8 +310,8 @@ export default {
             // let rindex = (this.curPage-1)*this.pageSize +index 
 
             console.log("==================================tap",index)
-            if(index == 0) { //  效果图
-               let item = this.labels[0]
+            let item = this.labels[index]
+            if(item.type ==='folder') { //  效果图
                 let list = getFolderContent(null,item.url).list
                this.$emit('routeTo',{
                     path:'pics',
@@ -294,23 +323,20 @@ export default {
 
                 })
             } 
-            if(index == 1) { // 简介
-             let item1 = this.labels[1]
+            if(item.type=='pdf') { // 简介
                 this.$emit('routeTo',{
                     pageName:'playVideo',
                     path:'pdf',
-                    param:item1.url
+                    param:item.url
                 })
             }
             //this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{index:rindex,list:this.labels}})
-            if(index === 2) { //宣传片
-                 let item2 = this.labels[2]
-                 console.log(item2)
+            if(item.type=='video') { //宣传片
                 this.$emit('routeTo',{
                     path:'playVideo',
                     param:{
                         pageName:'playVideo',
-                        index:0,list:[{name:'宣传片',url:item2.url}]}
+                        index:0,list:[{name:item.name,url:item.url}]}
                 })
             }
              

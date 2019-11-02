@@ -179,7 +179,10 @@ export default {
             
             if(e.type=="actionTo"){
                 if(e.options.action === 'back'){
-
+                    this.curPage = 1
+                    let start = (this.curPage-1)*this.pageSize
+                    let end = this.curPage * this.pageSize
+                    this.curLabels = this.labels.slice(start,end)
                     let params = e.options.action ==='back' ? this.from : ''
                     this.$emit('routeTo',params)
                     return 
@@ -219,6 +222,7 @@ export default {
         },
 
         tapHandler(index){ 
+            console.log('=---------------tap',index)
             let rindex = (this.curPage-1)*this.pageSize +index 
             this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{pageName:_.get(this.config,'config.content.to'),index:rindex,list:this.labels}})
              

@@ -69,9 +69,18 @@ export default {
         }
 
          this.icon = resolveAssets(app,_.get(this.config,'config.content.item.icon'))
- 
-       
     },
+    // watch:{
+    //     visible(val,old){
+    //         if(old ==false && val == true){
+    //             this.curPage = 1
+    //              let start = (this.curPage-1)*this.pageSize
+    //             let end = this.curPage * this.pageSize
+    //             this.curLabels = this.labels.slice(start,end)
+ 
+    //         }
+    //     }
+    // },
 
 
     computed:{
@@ -117,13 +126,22 @@ export default {
             console.log("=============",e.type)
            
             if(e.type=="routeTo"){
-             
+                if(e.options.path === 'main'){
+                     this.curPage = 1
+                    let start = (this.curPage-1)*this.pageSize
+                    let end = this.curPage * this.pageSize
+                    this.curLabels = this.labels.slice(start,end)
+                }
                 this.$emit('routeTo',e.options.path)
             }
             
             if(e.type=="actionTo"){
                 if(e.options.action === 'back'){
-
+                    console.log('------------------------')
+                    this.curPage = 1
+                    let start = (this.curPage-1)*this.pageSize
+                    let end = this.curPage * this.pageSize
+                    this.curLabels = this.labels.slice(start,end)
                     let params = e.options.action ==='back' ? this.from : ''
                     this.$emit('routeTo',params)
                     return 
