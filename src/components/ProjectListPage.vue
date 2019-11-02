@@ -3,8 +3,8 @@
         <template v-for="(button,index) in buttons">
             <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
         </template>
+        <div v-if="title" :style="titleStyle">{{title}}</div>
         <img draggable="false" class="bg" :src="bg">
-
         <div :style="contentStyle">
             <div :style="labelStyle" v-for="(label,index) in curLabels" v-bind:key="index" @click="tapHandler(index)">           
                 <img draggable="false" width ='224px'  height="220px" :src="icon" >
@@ -21,12 +21,11 @@ import EButton  from '../components/EButton'
 const {app} = window.electron.remote
 
 export default {
-    props:['config',"visible",'from'],
+    props:['config',"visible",'from',"pageParam"],
     data(){
         return {
             bg:null,
-            buttons:[],
-
+            buttons:[], 
             labels:[],
             pageSize:null,
             curPage:1,
@@ -34,49 +33,43 @@ export default {
             curLabels:[],
             count:null,
             column:null,
-            icon:null
+            icon:null,
+            title:""
         }
     },
     mounted(){
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
-
-        let labels;
-        let contentType = _.get(this.config,'config.content.contentType')
-        if(contentType === 'readdir'){
-            labels = getFolderContent(app,_.get(this.config,'config.content.items'))
-        }else{
-            labels = getFile(app, _.get(this.config,'config.content.items'))
+        if(this.pageParam && this.pageParam.pageName === 'showProject'){
+            this.setData(this.pageParam)
         }
-        if(labels.error){
-            console.error(labels)
-            return 
-        }
-        this.labels = labels.list
-        this.count = labels.list.length
-        
-        let row = _.get(this.config,'config.content.row')
-        let column = _.get(this.config,'config.content.column')
-        this.column = column
-        this.pageSize = row*column
-        this.pages = Math.ceil(this.count/this.pageSize)
-
-        if(this.count<this.pageSize){
-            this.curLabels = this.labels
-        }else{
-            this.curLabels = this.labels.slice(0,this.pageSize)
-        }
-
          this.icon = resolveAssets(app,_.get(this.config,'config.content.item.icon'))
- 
-       
     },
+    watch:{ 
+        pageParam(val){
+            if(val && val.pageName == 'showProject'){
+                console.log(val)
 
+                this.setData(val) 
+            }
+       } 
+    },
 
     computed:{
         visibleStyle(){
             return this.visible ? '' : 'display:none'
+        },
+        titleStyle(){
+            let list = []
+            list.push('position:absolute');
+            list.push('z-index:1'); 
+            list.push('color:white;background:red;padding-left:10px;padding-right:10px; padding-top:3px;padding-bottom:3px;line-height:30px ')
+            list.push(`left:${rw(_.get(this.config,'config.content.title.x'))}`)
+            list.push(`top:${rh(_.get(this.config,'config.content.title.y'))}`)
+            list.push(`fontSize:${rw(_.get(this.config,"config.content.title.fontSize"))}`)
+            let style = list.join(';')
+            return style
         },
       
         contentStyle(){ 
@@ -113,11 +106,74 @@ export default {
 
     },
     methods:{
-        buttonHandler(e){
-            console.log("=============",e.type)
-           
-            if(e.type=="routeTo"){
+        setData(params){
+
+            if(!params){
+                this.labels = [];
+                this.count = 0;
+                this.row =1
+                this.column = 1;
+                this.pageSize = 1
+                this.pages =1
+                this.curLabels = []
+                return 
+            }
+
+            let index = params.index;
+            let list = params.list;
+
+            let path = list[index];
+             if(!path){
+                this.labels = [];
+                this.count = 0;
+                this.row =1
+                this.column = 1;
+                this.pageSize = 1
+                this.pages =1
+                this.curLabels = []
+                return 
+             }
+             let labels;
+             let autoGetData = _.get(this.config,'config.content.autoGetData')
+             if(!autoGetData){
+                 this.labels = [];
+                this.count = 0;
+                this.row =1
+                this.column = 1;
+                this.pageSize = 1
+                this.pages =1
+                this.curLabels = []
+                 return 
+             }
+             labels = getFolderContent(null, path.url)
              
+            if(labels.error){
+                console.error(labels)
+                return 
+            }
+            this.title = path.name
+            this.labels = labels.list
+            this.labels.forEach(element => {
+                element.pname= path.name
+            });
+            this.count = labels.list.length
+            
+            let row = _.get(this.config,'config.content.row')
+            let column = _.get(this.config,'config.content.column')
+            this.column = column
+            this.pageSize = row*column
+            this.pages = Math.ceil(this.count/this.pageSize)
+
+            if(this.count<this.pageSize){
+                this.curLabels = this.labels
+            }else{
+                this.curLabels = this.labels.slice(0,this.pageSize)
+            }
+
+
+        },
+        buttonHandler(e){
+            if(e.type=="routeTo"){
                 this.$emit('routeTo',e.options.path)
             }
             
@@ -164,8 +220,6 @@ export default {
 
         tapHandler(index){ 
             let rindex = (this.curPage-1)*this.pageSize +index 
-
-            console.log("==================================tap",index)
             this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{pageName:_.get(this.config,'config.content.to'),index:rindex,list:this.labels}})
              
         }

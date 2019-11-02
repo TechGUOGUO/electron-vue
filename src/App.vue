@@ -15,7 +15,7 @@
         :visible = "currentPage===page.name" 
         :key= "page.name" 
         :config= "page" 
-        :pageParam= "currentPageParams"
+        :pageParam= "currentPage===page.name ? currentPageParams : null "
         @routeTo= "routeTo">
       </PDFPage>
       <VideoPage 
@@ -24,7 +24,7 @@
         :visible = "currentPage===page.name" 
         :key= "page.name" 
         :config= "page" 
-        :pageParam= "currentPageParams"
+        :pageParam= "currentPage == page.name ? currentPageParams : null"
         @routeTo= "routeTo">
       </VideoPage>
        <VideoListPage
@@ -54,6 +54,15 @@
         :pageParam= "currentPageParams"
         @routeTo= "routeTo">  
       </PicPage>
+       <PicPageWName
+        v-if="page.type=='picn'" 
+        :from="from"
+        :visible = "currentPage===page.name" 
+        :key= "page.name" 
+        :config= "page" 
+        :pageParam= "currentPageParams"
+        @routeTo= "routeTo">  
+      </PicPageWName>
       <BtnListPage 
         v-if="page.type=='pic_buttons'" 
         :from="from"
@@ -70,6 +79,32 @@
         @routeTo= "routeTo" 
         :key= "page.name">
       </ItemPagerListPage> 
+       <ItemPagerListPage2 
+        v-if="page.type=='pager_buttons2'" 
+        :from="from"
+        :visible = "currentPage==page.name" 
+        :config = "page"  
+        @routeTo= "routeTo" 
+        :key= "page.name">
+      </ItemPagerListPage2> 
+      <ProjectListPage 
+        v-if="page.type=='project-item-list'" 
+        :from="from"
+        :visible = "currentPage==page.name" 
+        :config = "page"  
+        @routeTo= "routeTo" 
+        :pageParam= "currentPageParams"
+        :key= "page.name">
+      </ProjectListPage> 
+      <ProjectPage 
+         v-if="page.type=='project'" 
+        :from="from"
+        :visible = "currentPage==page.name" 
+        :config = "page"  
+        @routeTo= "routeTo" 
+          :pageParam= "currentPageParams"
+        :key= "page.name">
+      </ProjectPage> 
       <AudioPage 
         v-if="page.type=='play'" 
         :from="from"
@@ -117,12 +152,16 @@ import VideoPage  from './components/VideoPage'
 import VideoListPage from './components/VideoListPage'
 import Pic3DPage  from './components/Pic3DPage'
 import PicPage from './components/PicPage'
+import PicPageWName from './components/PicPageWName'
 import BtnListPage from './components/BtnListPage'
 import AudioPage from './components/AudioPage'
 import ExamPage from './components/ExamPage'
 import ResultPage from './components/ResultPage'
 import DownloadPage from './components/DownloadPage'
 import ItemPagerListPage  from './components/ItemPagerListPage'
+import ItemPagerListPage2  from './components/ItemPagerListPage2'
+import ProjectListPage from './components/ProjectListPage'
+import ProjectPage from './components/ProjectPage'
 const {app} = window.electron.remote
 const config = getConfig(app)
 export default {
@@ -146,7 +185,7 @@ export default {
         this.currentPage = options.path;
         this.currentPageParams = options.param
 
-        console.log(this.currentPageParams)
+        console.log(this.currentPage,this.currentPageParams)
       }
       console.log("routeTo",options)
     }
@@ -170,7 +209,11 @@ export default {
     ExamPage,
     ResultPage,
     DownloadPage,
-    ItemPagerListPage
+    ItemPagerListPage,
+    ItemPagerListPage2,
+    ProjectListPage,
+    ProjectPage,
+    PicPageWName
   }
 
 }

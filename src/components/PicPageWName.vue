@@ -59,7 +59,10 @@ export default {
       },
         currentUrl(){
             console.log(this.pics,this.currentIndex)
-            return this.pics[this.currentIndex] || ''
+            if(this.pics && this.currentIndex >=0 && this.pics.length > this.currentIndex) {
+                return this.pics[this.currentIndex].url || ''
+            }
+            return ''
         }
     },
     methods:{

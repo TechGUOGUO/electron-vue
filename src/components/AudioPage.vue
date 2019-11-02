@@ -119,6 +119,7 @@ export default {
     },
     watch:{
        pageParam(val){
+           console.log('=================www')
            this.currentIndex = val.index;
            this.songs = val.songs
        },

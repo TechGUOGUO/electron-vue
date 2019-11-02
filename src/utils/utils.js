@@ -70,9 +70,17 @@ export function randomArray(source,num,type){
         n--;
     }
     return res
-}
+} 
 export function getFile(app,filePath){
-    const path =join(app.getPath('appData'),app.getName(),filePath)
+    if(!filePath) {
+
+        return  {
+            'error':'parse error',
+            'message': "path is undefined"
+        }
+    }
+    
+    const path = app ? join(app.getPath('appData'),app.getName(),filePath) : filePath
     let result = null
     try{
         const config = fs.readFileSync(path).toString()
@@ -87,7 +95,8 @@ export function getFile(app,filePath){
 }
 
 export function getFolderContent(app,filePath){
-    const path = join(app.getPath('appData'),app.getName(),filePath)
+    const path = app ? join(app.getPath('appData'),app.getName(),filePath): filePath
+    console.log(path)
     let result = null
     try{
         let list = fs.readdirSync(path)

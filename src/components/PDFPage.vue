@@ -36,7 +36,7 @@ export default {
       url(){ 
           console.log(this.pageParam)
           if(typeof this.pageParam === 'string' && this.pageParam){
-              return resolveAssets(app,this.pageParam)
+              return this.pageParam.indexOf(':')>=0 ? this.pageParam : resolveAssets(app,this.pageParam)
           }else{
               return ""
           }

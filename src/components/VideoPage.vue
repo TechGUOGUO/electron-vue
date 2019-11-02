@@ -38,6 +38,9 @@ export default {
     },
     watch:{
         pageParam(val){
+            console.log("================valddddd",val)
+            if(!val || val.pageName !=='playVideo')
+            return 
            console.log(val)
            this.url = val&& val.list ? val.list[val.index].url : _.get(this.config,'config.video.url') 
         }
@@ -49,16 +52,18 @@ export default {
         titleStyle(){
             let list = []
             list.push('position:absolute')
-
             list.push(`color:${_.get(this.config,'config.title.color')}`)
             list.push(`font-size:${_.get(this.config,'config.title.fontSize')}`)
             list.push(`font-weight:${_.get(this.config,'config.title.fontWeight')}`)
 
             list.push(`left:${rw(_.get(this.config,'config.title.x'))}`)
             list.push(`top:${rh(_.get(this.config,'config.title.y'))}`)
-            // list.push(`width:100%`)
+             list.push(`width:100%`)
+            
             list.push('text-align:left')
             list.push(`height:${rh(_.get(this.config,'config.title.height'))}`)
+            
+            list.push(`line-height:${rh(_.get(this.config,'config.title.height'))}`)
           //  list.push(`text-align:center`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
