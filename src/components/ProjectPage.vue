@@ -10,7 +10,7 @@
         <div :style="contentStyle">
             <div :style="labelStyle" v-for="(label,index) in labels" v-bind:key="index" @click="tapHandler(index)">           
                 <img draggable="false" width ='224'  height="220" style="width:224px;height:220px"  :src="label.icon" />
-                <span style="margin-top:-50px;text-stroke:1px #f0f0f0;text-shadow: 0.1em 0.1em 0.05em #333">{{label.name.split('.')[0]}}</span>
+                <span style="margin-top:-50px;text-stroke:1px #999;text-shadow: 0.1em 0.1em 0.1em #333;font-weight:bold">{{label.name.split('.')[0]}}</span>
             </div>
         </div>
     </div>

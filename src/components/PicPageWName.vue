@@ -6,6 +6,7 @@
         <template v-for="(button,index) in buttons">
             <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
         </template>
+        <div :style="titleStyle">{{title}}</div>
         <img draggable="false" class="bg" :src="bg">
     </div>
 </template>
@@ -22,7 +23,7 @@ export default {
             bg:null,
             buttons:[],
             currentIndex:-1,
-            pics:[]
+            pics:[],
         }
     },
     mounted(){
@@ -57,10 +58,34 @@ export default {
               return ''
           }
       },
+      titleStyle(){
+          let list = []
+          let titleconfig = _.get(this.config,'config.title')
+        list.push('position:absolute;z-index:1;text-align:center')
+        list.push(`color:${titleconfig.color}`)
+        list.push(`font-size:${rw(titleconfig.fontSize)}`)
+        list.push('text-align:center');
+        list.push(`left:${rw(titleconfig.x)}`)
+        list.push(`top:${rh(titleconfig.y)}`)
+        list.push(`width:${rw(titleconfig.width)}`)
+        list.push(`line-height:${rw(titleconfig.height)}`)
+          let style = list.join(';')
+          return style
+      },
         currentUrl(){
             console.log(this.pics,this.currentIndex)
             if(this.pics && this.currentIndex >=0 && this.pics.length > this.currentIndex) {
                 return this.pics[this.currentIndex].url || ''
+            }
+            return ''
+        },
+        title(){
+             if(this.pics && this.currentIndex >=0 && this.pics.length > this.currentIndex) {
+                 console.log("=================ttttttttttttttttttttttttttttttt",this.pics[this.currentIndex])
+                 let n =  this.pics[this.currentIndex].name
+                 if(!n) return '' 
+                
+               return n.split('.')[0]
             }
             return ''
         }
