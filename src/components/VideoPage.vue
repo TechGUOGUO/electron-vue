@@ -34,15 +34,31 @@ export default {
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
-        this.url = this.pageParam ? this.pageParam.list[this.pageParam.index].url : _.get(this.config,'config.video.url')
+
+        console.log(this.pageParam)
+        if(typeof this.pageParam === 'string'){
+            this.url = resolveAssets(app,this.pageParam)
+        }else{
+
+            this.url = this.pageParam ? this.pageParam.list[this.pageParam.index].url : _.get(this.config,'config.video.url')
+        }
+        console.log(this.url)
+        console.log(this.playUrl)
     },
     watch:{
         pageParam(val){
-            console.log("================valddddd",val)
-            if(!val || val.pageName !=='playVideo')
-            return 
-           console.log(val)
-           this.url = val&& val.list ? val.list[val.index].url : _.get(this.config,'config.video.url') 
+            console.log("vvvvvvvvv",val)
+            if(!val) return 
+            if(typeof val ==='string'){ 
+                this.url =  resolveAssets(app,val)
+                
+                 console.log("================valddddd",this.url)
+            }else{
+                if(!val || val.pageName !=='playVideo')
+                  return 
+                this.url = val&& val.list ? val.list[val.index].url : _.get(this.config,'config.video.url') 
+                console.log("================valddddd",this.url) 
+            }
         }
     },
     computed:{
@@ -95,7 +111,7 @@ export default {
           }
       },
       playUrl(){
-          return `file://${this.url}`
+          return `${this.url}`
       },
       videoWidth(){
           let video = _.get(this.config,'config.video')
@@ -105,7 +121,7 @@ export default {
           return `${rw(video.width)}px`
       },
       videoHeight(){
-            let video = _.get(this.config,'config.video')
+           let video = _.get(this.config,'config.video')
           if(!video){
               return ''
           }

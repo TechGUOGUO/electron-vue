@@ -19,9 +19,9 @@
         @routeTo= "routeTo">
       </PDFPage>
       <VideoPage 
-       v-if="page.type=='video'" 
+       v-if="page.type=='video' && currentPage === page.name" 
        :from="from"
-        :visible = "currentPage===page.name" 
+        :visible = "true" 
         :key= "page.name" 
         :config= "page" 
         :pageParam= "currentPage == page.name ? currentPageParams : null"

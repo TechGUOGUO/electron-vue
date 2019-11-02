@@ -278,7 +278,7 @@ export default {
         },
 
         tapHandler(index){ 
-            let rindex = (this.curPage-1)*this.pageSize +index 
+            // let rindex = (this.curPage-1)*this.pageSize +index 
 
             console.log("==================================tap",index)
             if(index == 0) { //  效果图
