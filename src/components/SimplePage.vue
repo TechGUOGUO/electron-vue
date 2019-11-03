@@ -62,6 +62,10 @@ export default {
                 this.$emit('routeTo',{path:e.options.path,param:e.options.param})
             }
             if(e.type=="actionTo"){
+                if(e.options.action === 'exit'){
+                    window.electron.remote.app.quit()
+                    return 
+                }
                 this.$emit('routeTo',e.options.action === 'back' ?this.from : '')
             }
         },
