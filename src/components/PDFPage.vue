@@ -1,7 +1,7 @@
 <template>
     <div class="bundlePage" :style="visibleStyle" @click="fullClick">  
          <webview  ref="pdfviewer" class="full" style="z-index:1;width:100%;height:100%"
-          :src = 'viewUrl'   disablewebsecurity ="true"
+          :src = 'viewUrl'   disablewebsecurity ="true" nodeintegration
          ></webview> 
         <template v-for="(button,index) in buttons">
             <EButton :zIndex="2" :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
@@ -51,9 +51,30 @@ export default {
                 this.$emit('routeTo',e.options.path)
             }
             if(e.type=="actionTo"){
+                if(e.options.action === 'pre'){
+                    const webview = document.querySelector('webview')
+                    webview.send('pre')
+                    return 
+                }
+                if(e.options.action === 'next'){
+                    const webview = document.querySelector('webview')
+                    webview.send('next')
+                    return 
+                }
+                  if(e.options.action === 'top'){
+                    const webview = document.querySelector('webview')
+                    webview.send('top')
+                    return 
+                }
+                if(e.options.action === 'back'){
+                     const webview = document.querySelector('webview')
+                    webview.send('top')
+                }
                 let params = e.options.action ==='back' ? this.from : ''
                 this.$emit('routeTo',params)
+            
             }
+            
         },
         fullClick(){
             let c = _.get(this.config,'config.bgclick')
