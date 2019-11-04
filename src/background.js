@@ -5,7 +5,7 @@ import {
   createProtocol,
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
-import {join} from 'path'
+import {resolve,join} from 'path'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 let staticFolder="";
 // Keep a global reference of the window object, if you don't, the window will
@@ -25,27 +25,40 @@ if(isDevelopment){
 app.setName('瀚华软件')
 app.setPath('appData',staticFolder)
 
-// Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
 
+// let ppfp ="" 
+// ppfp= process.arch=='x64'? require('path').join(staticFolder,'plugins/dll','/pepflashplayer64_30_0_0_113.dll'):require('path').join(staticFolder,'plugins/dll','/pepflashplayer32_30_0_0_113.dll')
+ 
+  
+// //console.log(app.getPath('pepperFlashSystemPlugin'))
+// console.log(ppfp)
+// app.commandLine.appendSwitch('ppapi-flash-path',ppfp); 
+// app.commandLine.appendSwitch('ppapi-flash-version', '30.0.0.113');
+
+// // Scheme must be registered before the app is ready
+// protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
+// //trustManager.add(resolve(staticFolder,'瀚华软件'))
 function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({ width: 1920, height: 1080, frame:false,fullscreen: isDevelopment ? false :true , webPreferences: {
     nodeIntegration: true,
     webSecurity:false,
 
-    plugins:true,
+    // plugins:true,
     webviewTag:true
   } })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) { 
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+    
    if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
+    // win.loadURL('app://E:\\projects\\guoyingxu\\electron-vue\\assets_config\\plugins\\pdf-book\\index.html')
+
   }
 
   win.on('closed', () => {

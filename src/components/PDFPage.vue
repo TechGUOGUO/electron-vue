@@ -42,7 +42,12 @@ export default {
           }
       },
     viewUrl(){ 
-        return this.url ? `${resolvePlugins(app,'pdfjs/web/viewer.html')}?file=${this.url}` : ''
+        if(this.url  && this.url.indexOf('pdf')<=0){
+            return this.url ? `${resolvePlugins(app,'pdfjs/web/viewer.html')}?file=${this.url}.pdf` : ''
+        }else{
+
+            return this.url ? `${resolvePlugins(app,'pdfjs/web/viewer.html')}?file=${this.url}` : ''
+        }
     }
     },
     methods:{

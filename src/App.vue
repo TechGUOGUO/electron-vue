@@ -9,15 +9,33 @@
         @routeTo= "routeTo" 
         :key= "page.name">
       </SimplePage>
+       <ModePage 
+        v-if="page.type=='pic_button_3'" 
+        :from="from"
+        :visible = "currentPage==page.name" 
+        :config = "page"  
+        @routeTo= "routeTo" 
+        :pageParam = "currentPage === page.name ? currentPageParams : null "
+        :key= "page.name">
+      </ModePage>
       <PDFPage 
         :from="from"
-        v-if="page.type=='pdf'" 
+        v-if="page.type=='pdf' && currentPage===page.name" 
         :visible = "currentPage===page.name" 
         :key= "page.name" 
         :config= "page" 
         :pageParam= "currentPage===page.name ? currentPageParams : null "
         @routeTo= "routeTo">
       </PDFPage>
+       <FlipBookPage 
+        :from="from"
+        v-if="page.type=='book'&&currentPage===page.name" 
+        :visible = "true" 
+        :key= "page.name" 
+        :config= "page" 
+        :pageParam= "currentPage===page.name ? currentPageParams : null "
+        @routeTo= "routeTo">
+      </FlipBookPage>
       <VideoPage 
        v-if="page.type=='video' && currentPage === page.name" 
        :from="from"
@@ -162,6 +180,8 @@ import ItemPagerListPage  from './components/ItemPagerListPage'
 import ItemPagerListPage2  from './components/ItemPagerListPage2'
 import ProjectListPage from './components/ProjectListPage'
 import ProjectPage from './components/ProjectPage'
+import ModePage from './components/Mode'
+import FlipBookPage from './components/FlipBookPage'
 const {app} = window.electron.remote
 const config = getConfig(app)
 export default {
@@ -213,7 +233,9 @@ export default {
     ItemPagerListPage2,
     ProjectListPage,
     ProjectPage,
-    PicPageWName
+    PicPageWName,
+    ModePage,
+     FlipBookPage
   }
 
 }

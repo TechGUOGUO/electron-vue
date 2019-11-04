@@ -135,6 +135,10 @@ export default {
             }
             
             if(e.type=="actionTo"){
+                 if(e.options.action === 'exit'){
+                    window.electron.remote.app.quit()
+                    return 
+                }
                 if(e.options.action === 'back'){
                     console.log('------------------------')
                     this.curPage = 1
