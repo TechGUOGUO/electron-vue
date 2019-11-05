@@ -96,12 +96,31 @@ export function getFile(app,filePath){
 
 export function getFolderContent(app,filePath){
     const path = app ? join(app.getPath('appData'),app.getName(),filePath): filePath
-    console.log(path)
     let result = null
     try{
         let list = fs.readdirSync(path)
-        result = {
-            list:list.map(f=>({name:f,url:path+'/'+f}))
+        let sort =_.find(list,f=>f==="order.json")
+        if(sort){
+          let sortcontent = fs.readFileSync(path+'/order.json').toString()
+          let sortList = JSON.parse(sortcontent).list
+          console.log(sortList) 
+          let sorted = sortList.map( fname =>{
+              return {name:fname,url:path+'/'+fname}
+          })
+
+          let rest = list.filter(f=> sortList.indexOf(f)<0 && f!='order.json')
+          console.log(rest)
+          let restsort = rest.map(f=>({name:f,url:path+'/'+f}))
+          console.log(restsort)
+          result ={
+              list:[...sorted,...restsort]
+          } 
+          console.log(result)
+        }else{
+
+            result = {
+                list:list.map(f=>({name:f,url:path+'/'+f}))
+            }
         }
     }catch(e){
         result = {
