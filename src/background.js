@@ -22,7 +22,7 @@ if(isDevelopment){
 }
 // app.setName('清镇法条');
 // app.setName('gaokao')
-app.setName('瀚华软件')
+app.setName('瀚华软件book版')
 app.setPath('appData',staticFolder)
 
 

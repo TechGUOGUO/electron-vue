@@ -36,6 +36,15 @@
         :pageParam= "currentPage===page.name ? currentPageParams : null "
         @routeTo= "routeTo">
       </FlipBookPage>
+       <TurnBookPage 
+        :from="from"
+        v-if="page.type=='turnbook'&&currentPage===page.name" 
+        :visible = "true" 
+        :key= "page.name" 
+        :config= "page" 
+        :pageParam= "currentPage===page.name ? currentPageParams : null "
+        @routeTo= "routeTo">
+      </TurnBookPage>
       <VideoPage 
        v-if="page.type=='video' && currentPage === page.name" 
        :from="from"
@@ -182,6 +191,7 @@ import ProjectListPage from './components/ProjectListPage'
 import ProjectPage from './components/ProjectPage'
 import ModePage from './components/Mode'
 import FlipBookPage from './components/FlipBookPage'
+import TurnBookPage from './components/TurnBookPage'
 const {app} = window.electron.remote
 const config = getConfig(app)
 export default {
@@ -235,7 +245,8 @@ export default {
     ProjectPage,
     PicPageWName,
     ModePage,
-     FlipBookPage
+    FlipBookPage,
+    TurnBookPage
   }
 
 }

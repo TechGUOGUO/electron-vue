@@ -22,7 +22,8 @@ export default {
             buttons:[],
             qr:null,
             qrcodeimg:null,
-            param:null
+            param:null,
+            ff:null
         }
     },
     mounted(){
@@ -44,7 +45,10 @@ export default {
         if(typeof this.param == 'object' && JSON.stringify(this.pageParam)!='{}'){
             this.param = this.pageParam
         }
-
+        if(this.from &&this.from!='pdf' && this.from!='turnbook' && this.from !='mode'){
+                this.ff = this.from
+                console.log('====set ddd',this.ff)
+            }
         console.log(this.param)
         
     },
@@ -57,6 +61,13 @@ export default {
                  this.param = val; 
             }
             console.log('-----watch',this.param)
+        },
+        from(val){
+            console.log(val)
+            if(val && val!='pdf' && val!='turnbook' && val!='mode'){
+                console.log('=====setff',val)
+                this.ff = val
+            }
         }
     },
     computed:{
@@ -88,7 +99,8 @@ export default {
                     window.electron.remote.app.quit()
                     return 
                 }
-                this.$emit('routeTo',e.options.action === 'back' ?this.from : '')
+                console.log('===============',this.ff)
+                this.$emit('routeTo',e.options.action === 'back' ?this.ff : '')
             }
         },
         fullClick(){
