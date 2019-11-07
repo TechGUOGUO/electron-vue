@@ -33,7 +33,8 @@ export default {
             curLabels:[],
             count:null,
             column:null,
-            icon:null
+            icon:null ,
+            ff:null
         }
     },
     mounted(){
@@ -68,18 +69,20 @@ export default {
         }
 
          this.icon = resolveAssets(app,_.get(this.config,'config.content.item.icon'))
+           if(this.from &&this.from!='projectList' &&  this.from !='showProject'){
+                this.ff = this.from
+                console.log('====set ddd',this.ff)
+            }
     },
-    // watch:{
-    //     visible(val,old){
-    //         if(old ==false && val == true){
-    //             this.curPage = 1
-    //              let start = (this.curPage-1)*this.pageSize
-    //             let end = this.curPage * this.pageSize
-    //             this.curLabels = this.labels.slice(start,end)
- 
-    //         }
-    //     }
-    // },
+    watch:{
+        from(val){
+            console.log(val)
+            if(val && val!='projectList'  && val!='showProject'){
+                console.log('=====setff',val)
+                this.ff = val
+            }
+        }
+    },
 
 
     computed:{
@@ -145,7 +148,7 @@ export default {
                     let start = (this.curPage-1)*this.pageSize
                     let end = this.curPage * this.pageSize
                     this.curLabels = this.labels.slice(start,end)
-                    let params = e.options.action ==='back' ? this.from : ''
+                    let params = e.options.action ==='back' ? this.ff : ''
                     this.$emit('routeTo',params)
                     return 
                 }

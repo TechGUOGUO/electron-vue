@@ -326,7 +326,7 @@ export default {
             if(item.type=='pdf') { // 简介
                 this.$emit('routeTo',{
                     pageName:'playVideo',
-                    path:'pdf',
+                    path:'mode',
                     param:item.url
                 })
             }

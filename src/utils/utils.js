@@ -94,11 +94,34 @@ export function getFile(app,filePath){
     return result
 }
 
-export function getFolderContent(app,filePath){
-    const path = app ? join(app.getPath('appData'),app.getName(),filePath): filePath
+export function getFolderContent(app,filePath,issort){
+    let path ;
+    if(filePath.indexOf(":")>=0){
+        path =filePath
+    }else{
+         path = app ? join(app.getPath('appData'),app.getName(),filePath): filePath
+    }
     let result = null
     try{
-        let list = fs.readdirSync(path)
+        let list1 = fs.readdirSync(path) 
+        console.log('list1')
+        let list= []
+        list1.forEach(f=>{
+            console.log(f,list)
+            if(f.indexOf('.')>=0){
+                list.push(f);
+            }else{
+                if(list1.indexOf(f+'.pdf')<0){
+                    list.push(f)
+                }
+            }
+        })
+
+        console.log(issort)
+        if(issort ){
+            list.sort((a,b)=>  parseInt(a.split('.')[0])-parseInt(b.split('.')[0]))
+        }
+         console.log(list)
         let sort =_.find(list,f=>f==="order.json")
         if(sort){
           let sortcontent = fs.readFileSync(path+'/order.json').toString()

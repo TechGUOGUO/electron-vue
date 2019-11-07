@@ -69,7 +69,7 @@ export default {
       pages(){
            if(typeof this.pageParam === 'string' && this.pageParam){
               let p  = this.pageParam.replace('.pdf','')
-              let content = getFolderContent(app,p);
+              let content = getFolderContent(app,p,true);
               console.log('!!!!!!!!!!!!!',content)
               if(!content.error){
                   return  content.list
@@ -124,7 +124,9 @@ console.log('==============loadapp')
 			
 			// Auto center this flipbook
 
-			autoCenter: true
+            autoCenter: true,
+            cornerSize: 300,
+            duration :1200
 
     });
      // $('.flipbook').turn('page',1);
