@@ -71,9 +71,70 @@ export function randomArray(source,num,type){
     }
     return res
 } 
+export function checkContent(app,path){
+    let p= ""
+    if(path.indexOf(':')>=0){
+        p = path
+    }else{
+        p = join(app.getPath('appData'),app.getName(),'content',path)
+    }
+    try{
+        let te= fs.readdirSync(p)
+        console.log(te)
+        let list = []
+        te.forEach(f=>{
+            if(f.indexOf('.mp4')>=0){
+                list.push({
+                    type:'video',
+                    name:f
+                })
+            }else if(f.indexOf('.pdf') >=0){
+                let item = _.find(list,item=>item.name== f.split('.')[0])
+                if(!item){
+                    list.push({
+                        type:'pdf',
+                        name:f.split('.')[0]
+                    })
+                }else{
+                    item.type="pdf"
+                }
+            }else {
+                if(!(_.find(list,item=> item.name.split('.')[0] == f))){
+                    list.push({
+                        type:'pic',
+                        name:f
+                    })
+                }
+            }
+        })
+        console.log(list)
+        return list
+    }catch(e){
+        console.log(e)
+        return []
+    }
+}
+export function checkFilePath(app,path,isFile){
+    let p = ""
+    if(path.indexOf(":")>=0 || !app){
+        p = path;
+    }else{
+        p = join(app.getPath('appData'),app.getName(),'content',path)
+    }
+    try{
+        let st = fs.statSync(p)
+        console.log(st)
+        if(isFile){
+            return st.isFile() ? path : ''
+        }else{
+            return st.isDirectory() ? path : ''
+        }
+    }catch(e){
+        return ''
+    }
+}
 export function getFile(app,filePath){
-    if(!filePath) {
-
+    if(!filePath) { 
         return  {
             'error':'parse error',
             'message': "path is undefined"
@@ -92,6 +153,21 @@ export function getFile(app,filePath){
         }
     }
     return result
+}
+export function getContentFolder(app,filePath){
+    let path;
+    if(filePath.indexOf(":")>=0){
+        path = filePath
+    }else{
+        path = join(app.getPath('appData'),app.getName(),'content',filePath)
+    }
+    try{
+        let  list = fs.readdirSync(path)
+        list = list.filter(f=>f.indexOf('.json')<0)
+        return list
+    }catch(e){
+        return []
+    }
 }
 
 export function getFolderContent(app,filePath,issort){

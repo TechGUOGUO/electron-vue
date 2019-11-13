@@ -16,7 +16,7 @@
 
 <script>
 import _ from 'lodash'
-import {resolveAssets,rw,rh,getFile,getFolderContent} from '../utils/utils'
+import {resolveAssets,rw,rh,getFolderContent} from '../utils/utils'
 import EButton  from '../components/EButton'
 const {app} = window.electron.remote
 

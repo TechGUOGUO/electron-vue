@@ -1,11 +1,13 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, dialog, BrowserWindow ,globalShortcut, ipcMain } from 'electron'
 import {
   createProtocol,
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
-import {resolve,join} from 'path'
+import {resolve,join,basename} from 'path'
+import fs, { unlink } from 'fs'
+import { resolveAssets } from './utils/utils'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 let staticFolder="";
 // Keep a global reference of the window object, if you don't, the window will
@@ -101,8 +103,194 @@ app.on('ready', async () => {
   }
   
   createWindow()
-})
 
+  globalShortcut.register('CommandOrControl+E', () => {
+    win.webContents.send('editor')
+  })
+
+
+  ipcMain.on('delFile',(event,arg1,arg2)=>{
+    let d =dialog.showMessageBoxSync({
+      title:'删除',
+      message:`您确认要删除${arg1}?`,
+      buttons:['取消','确定']
+    })
+    console.log(d)
+    if(d == 1){
+      let p1 = resolvePath(arg1)
+      if(arg2)
+        fs.unlinkSync(p1)
+      else
+      delDir(p1)
+        // fs.rmdirSync(p1,{recursive :true})
+      
+    }
+    event.returnValue = 'success'
+  })
+  ipcMain.on('delAllfile',(event,arg1)=>{
+    let d =dialog.showMessageBoxSync({
+      title:'删除',
+      message:`您确认要删除${arg1}?`,
+      buttons:['取消','确定']
+    })
+    if(d == 1){
+      let p1 = resolvePath(arg1)
+      delDir(p1)
+      if(fs.existsSync(p1+'.pdf')){
+        fs.unlinkSync(p1+'.pdf')
+      }
+        // fs.rmdirSync(p1,{recursive :true})
+      
+    }
+    event.returnValue = 'success'
+  })
+  ipcMain.on('addFolder',(event,arg1,arg2)=>{
+    try{
+      fs.mkdirSync(resolvePath(arg1))
+    }catch(e){
+      console.log(e)
+      event.returnValue = 'fail'
+      return
+    }
+    event.returnValue = 'success'
+  })
+  
+  ipcMain.on('addFile',(event,arg1,arg2)=>{
+    let properties  = arg2 ? ['openFile'] : ['openDirectory']
+    let path = dialog.showOpenDialogSync(win, {
+      properties:properties
+    })
+    if(path == undefined){
+      event.returnValue ="cancel"
+    }else{
+      if(arg2){
+        let src = path[0]
+        try{
+          let filename= basename(src);
+          let dist = join(resolvePath(arg1),filename)
+           fs.copyFileSync(src, dist);
+        }catch(e){
+          console.log(e)
+          dialog.showMessageBoxSync(win,{
+            title:"错误",
+            message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
+          })
+          event.returnValue = 'faild'
+        }
+      }else{
+        console.log(path)
+        let folder = path[0]
+        try{
+          let distfolder = resolvePath(arg1);
+          try{
+            let s = fs.statSync(distfolder)
+            if(s.isFile()){
+              fs.mkdirSync(distfolder)
+            }
+          }catch(e){
+            fs.mkdirSync(distfolder)
+          }
+          let files = fs.readdirSync(folder);
+          console.log(files)
+          files.forEach(name=>{
+            if(name.indexOf('.')>=0)
+            fs.copyFileSync(join(folder,name),join(resolvePath(arg1),name))
+          })
+        }catch(e){
+          console.log(e)
+          dialog.showMessageBoxSync(win,{
+            title:"错误",
+            message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
+          })
+          event.returnValue = 'faild' 
+        }
+      }
+
+    }
+    event.returnValue = 'success'
+  })
+  ipcMain.on('relaunch',()=>{
+    console.log('-----relaunch')
+    dialog.showMessageBoxSync(win,{
+      title:'提示',
+      message:'请重新启动应用，是当前编辑生效'
+    })
+    app.quit()
+  })
+  ipcMain.on('selectFile',(event,arg1,arg2)=>{
+    console.log(arg1,arg2)
+    let properties  = arg2 ? ['openFile'] : ['openDirectory']
+    let path = dialog.showOpenDialogSync(win, {
+      properties:properties
+    })
+    if(path == undefined){
+      event.returnValue ="cancel"
+    }else{
+      if(arg2){
+        let src = path[0]
+        try{
+          let res =  fs.copyFileSync(src, resolvePath(arg1));
+        }catch(e){
+          dialog.showMessageBoxSync(win,{
+            title:"错误",
+            message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
+          })
+          event.returnValue = 'faild'
+        }
+      }else{
+        console.log(path)
+        let folder = path[0]
+        try{
+          let distfolder = resolvePath(arg1);
+          try{
+            let s = fs.statSync(distfolder)
+            if(s.isFile()){
+              fs.mkdirSync(distfolder)
+            }
+          }catch(e){
+            fs.mkdirSync(distfolder)
+          }
+          let files = fs.readdirSync(folder);
+          console.log(files)
+          files.forEach(name=>{
+            fs.copyFileSync(join(folder,name),join(resolvePath(arg1),name))
+          })
+        }catch(e){
+          console.log(e)
+          dialog.showMessageBoxSync(win,{
+            title:"错误",
+            message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
+          })
+          event.returnValue = 'faild' 
+        }
+      }
+
+    }
+    event.returnValue = 'success'
+  }) 
+})
+function delDir(path){
+  let files = [];
+  if(fs.existsSync(path)){
+      files = fs.readdirSync(path);
+      files.forEach((file, index) => {
+          let curPath = path + "/" + file;
+          if(fs.statSync(curPath).isDirectory()){
+              delDir(curPath); //递归删除文件夹
+          } else {
+              fs.unlinkSync(curPath); //删除文件
+          }
+      });
+      fs.rmdirSync(path);
+  }
+} 
+function resolvePath(path){
+  if(path.indexOf(':')>=0){
+    return path
+  }else{
+    return join(staticFolder,app.getName(),'content',path)
+  }
+}
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {

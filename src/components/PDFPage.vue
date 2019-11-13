@@ -29,6 +29,15 @@ export default {
         this.buttons = buttons
 
     },
+    watch:{
+
+        url(val,old){
+            if(val!== old){
+                  const webview = document.querySelector('webview')
+                    webview.send('top')
+            }
+        }
+    },
     computed:{
       visibleStyle(){
           return this.visible ? '' : 'display:none'
