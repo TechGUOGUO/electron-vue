@@ -5,7 +5,7 @@ import {
   createProtocol,
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
-import {resolve,join,basename} from 'path'
+import {resolve,join,basename,dirname} from 'path'
 import fs, { unlink } from 'fs'
 import { resolveAssets } from './utils/utils'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -109,7 +109,7 @@ app.on('ready', async () => {
   })
 
 
-  ipcMain.on('delFile',(event,arg1,arg2)=>{
+  ipcMain.on('delFile',(event,arg1,arg2)=>{ 
     let d =dialog.showMessageBoxSync({
       title:'删除',
       message:`您确认要删除${arg1}?`,
@@ -123,11 +123,14 @@ app.on('ready', async () => {
       else
       delDir(p1)
         // fs.rmdirSync(p1,{recursive :true})
-      
+      changeJson('del',dirname(p1),basename(p1)) 
     }
     event.returnValue = 'success'
   })
   ipcMain.on('delAllfile',(event,arg1)=>{
+
+    // let n = basename(arg1)
+    // console.log(n)
     let d =dialog.showMessageBoxSync({
       title:'删除',
       message:`您确认要删除${arg1}?`,
@@ -135,18 +138,26 @@ app.on('ready', async () => {
     })
     if(d == 1){
       let p1 = resolvePath(arg1)
-      delDir(p1)
+      console.log(p1)
+      delDir(p1) 
       if(fs.existsSync(p1+'.pdf')){
         fs.unlinkSync(p1+'.pdf')
       }
+      if(fs.existsSync(p1+'.mp4')){
+        fs.unlinkSync(p1+'.mp4')
+      }
         // fs.rmdirSync(p1,{recursive :true})
+      changeJson('del',dirname(p1),basename(p1))
       
     }
     event.returnValue = 'success'
+    
   })
   ipcMain.on('addFolder',(event,arg1,arg2)=>{
     try{
+      let p = resolvePath(arg1)
       fs.mkdirSync(resolvePath(arg1))
+      changeJson('add',dirname(p),basename(p))
     }catch(e){
       console.log(e)
       event.returnValue = 'fail'
@@ -154,8 +165,41 @@ app.on('ready', async () => {
     }
     event.returnValue = 'success'
   })
-  
+   function changeJson(cmd,src,key){
+     console.log(cmd,src,key)
+    let json = {}
+    try{
+      let str =   fs.readFileSync(src+'/order.json').toString()
+      json = JSON.parse(str)
+    }catch(e){
+      json = {list:[]}
+      console.log(e)
+    }
+    let name = key.split('.')[0]
+    switch(cmd){
+      case "add":
+        if(json.list.indexOf(name)<0){
+          json.list.push(name);
+        }
+        break;
+      case 'del':
+        let index = json.list.indexOf(name)
+        if(index>=0){
+          json.list.splice(index,1);
+        }
+        console.log(json)
+        break;
+      default: break;
+    }
+    console.log(json)
+    try{ 
+        fs.writeFileSync(src+'/order.json',JSON.stringify(json))
+    }catch(e){
+      console.log(e)
+    }
+  }
   ipcMain.on('addFile',(event,arg1,arg2)=>{
+    console.log('addfile')
     let properties  = arg2 ? ['openFile'] : ['openDirectory']
     let path = dialog.showOpenDialogSync(win, {
       properties:properties
@@ -167,8 +211,10 @@ app.on('ready', async () => {
         let src = path[0]
         try{
           let filename= basename(src);
-          let dist = join(resolvePath(arg1),filename)
+          let p = resolvePath(arg1)
+          let dist = join(p,filename)
            fs.copyFileSync(src, dist);
+          changeJson('add',p,filename)
         }catch(e){
           console.log(e)
           dialog.showMessageBoxSync(win,{
@@ -196,6 +242,7 @@ app.on('ready', async () => {
             if(name.indexOf('.')>=0)
             fs.copyFileSync(join(folder,name),join(resolvePath(arg1),name))
           })
+          changeJson('add',dirname(distfolder),basename(distfolder))
         }catch(e){
           console.log(e)
           dialog.showMessageBoxSync(win,{
@@ -228,6 +275,8 @@ app.on('ready', async () => {
     }else{
       if(arg2){
         let src = path[0]
+        let p = resolvePath(arg1)
+
         try{
           let res =  fs.copyFileSync(src, resolvePath(arg1));
         }catch(e){
@@ -237,6 +286,7 @@ app.on('ready', async () => {
           })
           event.returnValue = 'faild'
         }
+        changeJson('add',dirname(p),basename(p))
       }else{
         console.log(path)
         let folder = path[0]
@@ -255,6 +305,7 @@ app.on('ready', async () => {
           files.forEach(name=>{
             fs.copyFileSync(join(folder,name),join(resolvePath(arg1),name))
           })
+          changeJson('add',dirname(distfolder),basename(distfolder))
         }catch(e){
           console.log(e)
           dialog.showMessageBoxSync(win,{
@@ -272,16 +323,20 @@ app.on('ready', async () => {
 function delDir(path){
   let files = [];
   if(fs.existsSync(path)){
-      files = fs.readdirSync(path);
-      files.forEach((file, index) => {
+      if(fs.statSync(path).isDirectory()){
+        files = fs.readdirSync(path);
+        files.forEach((file, index) => {
           let curPath = path + "/" + file;
           if(fs.statSync(curPath).isDirectory()){
-              delDir(curPath); //递归删除文件夹
+            delDir(curPath); //递归删除文件夹
           } else {
-              fs.unlinkSync(curPath); //删除文件
+            fs.unlinkSync(curPath); //删除文件
           }
-      });
-      fs.rmdirSync(path);
+        });
+        fs.rmdirSync(path);
+      }else{
+        fs.unlinkSync(path); //删除文件
+      }
   }
 } 
 function resolvePath(path){

@@ -82,32 +82,42 @@ export function checkContent(app,path){
         let te= fs.readdirSync(p)
         console.log(te)
         let list = []
-        te.forEach(f=>{
-            if(f.indexOf('.mp4')>=0){
-                list.push({
-                    type:'video',
-                    name:f
+
+        let sort =_.find(te,f=>f==="order.json")
+        if(sort){
+          let sortcontent = fs.readFileSync(p+'/order.json').toString()
+          let sortList = JSON.parse(sortcontent).list
+          console.log(sortList) 
+            sortList.forEach(sf=>{
+                te.forEach( f=>{
+                    let fname = f.split('.')[0]
+                    if(sf !== fname) return
+                    if(f.indexOf('.mp4')>=0){
+                        list.push({
+                            type:'video',
+                            name:f
+                        })
+                    }else if(f.indexOf('.pdf') >=0){
+                        let item = _.find(list,item=>item.name== f.split('.')[0])
+                        if(!item){
+                            list.push({
+                                type:'pdf',
+                                name:f.split('.')[0]
+                            })
+                        }else{
+                            item.type="pdf"
+                        }
+                    }else {
+                        if(!(_.find(list,item=> item.name.split('.')[0] == f))){
+                            list.push({
+                                type:'pic',
+                                name:f
+                            })
+                        }
+                    }
                 })
-            }else if(f.indexOf('.pdf') >=0){
-                let item = _.find(list,item=>item.name== f.split('.')[0])
-                if(!item){
-                    list.push({
-                        type:'pdf',
-                        name:f.split('.')[0]
-                    })
-                }else{
-                    item.type="pdf"
-                }
-            }else {
-                if(!(_.find(list,item=> item.name.split('.')[0] == f))){
-                    list.push({
-                        type:'pic',
-                        name:f
-                    })
-                }
-            }
-        })
-        console.log(list)
+            }) 
+        }
         return list
     }catch(e){
         console.log(e)
@@ -162,63 +172,74 @@ export function getContentFolder(app,filePath){
         path = join(app.getPath('appData'),app.getName(),'content',filePath)
     }
     try{
-        let  list = fs.readdirSync(path)
-        list = list.filter(f=>f.indexOf('.json')<0)
+        let  te = fs.readdirSync(path)
+        // list = list.filter(f=>f.indexOf('.json')<0)
+        let list = []
+        let sort = _.find(te,f=>f==='order.json')
+        if(sort){
+            let sortcontent = fs.readFileSync(path+'/order.json').toString()
+            list = JSON.parse(sortcontent).list
+        }
         return list
     }catch(e){
         return []
     }
 }
 
-export function getFolderContent(app,filePath,issort){
+export function getFolderContent(app,filePath){
     let path ;
     if(filePath.indexOf(":")>=0){
         path =filePath
     }else{
          path = app ? join(app.getPath('appData'),app.getName(),filePath): filePath
     }
+    console.log("!!!!",path)
     let result = null
     try{
-        let list1 = fs.readdirSync(path) 
-        console.log('list1')
-        let list= []
-        list1.forEach(f=>{
-            console.log(f,list)
-            if(f.indexOf('.')>=0){
-                list.push(f);
-            }else{
-                if(list1.indexOf(f+'.pdf')<0){
-                    list.push(f)
-                }
-            }
-        })
-
-        console.log(issort)
-        if(issort ){
-            list.sort((a,b)=>  parseInt(a.split('.')[0])-parseInt(b.split('.')[0]))
-        }
-         console.log(list)
-        let sort =_.find(list,f=>f==="order.json")
+        let te = fs.readdirSync(path) 
+        let list = []
+        let sort =_.find(te,f=>f==="order.json")
         if(sort){
           let sortcontent = fs.readFileSync(path+'/order.json').toString()
           let sortList = JSON.parse(sortcontent).list
-          console.log(sortList) 
-          let sorted = sortList.map( fname =>{
-              return {name:fname,url:path+'/'+fname}
-          })
-
-          let rest = list.filter(f=> sortList.indexOf(f)<0 && f!='order.json')
-          console.log(rest)
-          let restsort = rest.map(f=>({name:f,url:path+'/'+f}))
-          console.log(restsort)
+          sortList.forEach(sf=>{
+                te.forEach( f=>{
+                    let fname = f.split('.')[0]
+                    if(sf !== fname) return
+                    if(f.indexOf('.mp4')>=0){
+                        list.push({
+                            url:path + '/'+ f,
+                            name:f
+                        })
+                    }else if(f.indexOf('.pdf') >=0){
+                        let item = _.find(list,item=>item.name== f.split('.')[0])
+                        if(!item){
+                            list.push({
+                                url:path + '/'+ f,
+                                name:f
+                            })
+                        }else{
+                            item.url = item.url+'.pdf'
+                            item.name= item.name+'.pdf'
+                        }
+                    }else {
+                        if(!(_.find(list,item=> item.name.split('.')[0] == f))){
+                            list.push({
+                                url:path + '/'+ f,
+                                name:f
+                            })
+                        }
+                    }
+                })
+            })  
           result ={
-              list:[...sorted,...restsort]
+              list:list
           } 
           console.log(result)
         }else{
 
             result = {
-                list:list.map(f=>({name:f,url:path+'/'+f}))
+                list:te.map(f=>({name:f,url:path+'/'+f}))
             }
         }
     }catch(e){

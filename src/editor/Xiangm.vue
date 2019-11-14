@@ -88,7 +88,9 @@ export default {
      computed:{
          XMList(){
             if(this.currentRoute == '重要项目' && this.ii){
-                return getContentFolder(app,'重要项目')
+                let s =  getContentFolder(app,'重要项目')
+                console.log('===',s)
+                return s
             }else{
                 return []
             }

@@ -3,7 +3,7 @@
         <Leftcontent :currentRoute = "currentRoute" @toContent = "toContent"/>
         <div style="flex:1">
             <div style="line-height:80px;font-size:30px;border-bottom:1px solid rgba(0,0,0,0.4);padding-left:40px"> {{rootPath}}</div>
-            <Jianjie :currentRoute="currentRoute" v-if='!isXm &&  currentRoute=="瀚华简介"'></Jianjie>
+            <Jianjie :currentRoute= "currentRoute" v-if='!isXm &&  currentRoute=="瀚华简介"'></Jianjie>
             <Zhounian :currentRoute = 'currentRoute' v-if="!isXm && currentRoute =='十五周年'"></Zhounian>
             <Shipin :currentRoute = 'currentRoute' v-if="!isXm && currentRoute =='视频点播'"> </Shipin>
             <Xiangm :currentRoute = 'currentRoute' v-if="!isXm && !isXmList && currentRoute =='重要项目'" @xm="editlist"></Xiangm>

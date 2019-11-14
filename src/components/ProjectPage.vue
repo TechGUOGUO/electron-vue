@@ -28,7 +28,6 @@ export default {
         return {
             bg:null,
             buttons:[],
-
             labels:[],
             pageSize:null,
             curPage:1,
@@ -139,7 +138,61 @@ export default {
 
         
         setData(params){
+            
+             let labels;
               console.log("setData+++++++++++++++++++++++++++++++++", params)
+            let configItems = _.get(this.config,'config.content.items')
+            if(configItems){
+                 labels = getFolderContent(app, configItems)
+             console.log('labels',labels.list)
+            if(labels.error){
+                console.error(labels)
+                return 
+            }
+            let t = []
+            labels.list.forEach(f=>{
+                console.log(f.name)
+                if(f.url.indexOf('.')<0){
+                    t.push({
+                        name:f.name,
+                        icon: this.getIcon('pic'),
+                        url: f.url,
+                        type:'folder'
+                    })
+                }else{
+                    let ext = f.url.split('.')[1]
+                    if(['mp4','mov'].indexOf(ext.toLowerCase())>=0){
+                        t.push({
+                            name: f.name,
+                            icon:this.getIcon('mp4'),
+                            url:f.url,
+                            type:'video'
+                        })
+                    }
+                    if(['pdf'].indexOf(ext.toLowerCase())>=0){
+                        t.push({
+                            name:f.name,
+                            icon: this.getIcon('pdf'),
+                            url:f.url,
+                            type: 'pdf'
+                        })
+                    }
+                }
+            })
+
+            this.labels = t ;
+          
+            
+            this.count = labels.list.length
+            
+            let row = _.get(this.config,'config.content.row')
+            let column = _.get(this.config,'config.content.column')
+            this.column = column
+            this.pageSize = row*column
+            this.pages = Math.ceil(this.count/this.pageSize)
+            this.curLabels = this.labels 
+            return 
+            }
             if(!params || !params.list){
                 this.labels = [];
                 this.count = 0;
@@ -166,7 +219,6 @@ export default {
                 this.curLabels = []
                 return 
              }
-             let labels;
              this.title = path.pname + "|"+ path.name;
              let autoGetData = _.get(this.config,'config.content.autoGetData')
              if(!autoGetData){
@@ -217,23 +269,7 @@ export default {
             })
 
             this.labels = t ;
-            // [
-            //     {
-            //         name:'效果图',
-            //         icon: this.getIcon('效果图'),
-            //         url: _.find(labels.list,f=>f.name.indexOf('效果图')>=0).url
-            //     },
-            //      {
-            //         name:'简介',
-            //         icon: this.getIcon('简介'),
-            //         url: _.find(labels.list,f=>f.name.indexOf('简介')>=0).url
-            //     },
-            //      {
-            //         name:'宣传片',
-            //         icon: this.getIcon('宣传片'),
-            //         url: _.find(labels.list,f=>f.name.indexOf('宣传片')>=0).url
-            //     }
-            // ] 
+          
             
             this.count = labels.list.length
             

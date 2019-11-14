@@ -31,35 +31,7 @@
                     <input type="button" value="选择"  @click="selectFile(`${base}/${v.name}`,false)"/>
                 </div>
             </div>
-            <!-- <div style="line-height:30px">瀚华金融简介</div>
-            <div style="margin:10px;display:flex;flex-direction:row;padding-left:30px">
-                <div >pdf</div>
-                <input style="flex:1;margin-left:20px" type="text" :value="jiaanjiepdf" />
-                 <input type="button" value="选择"  @click="selectFile(s_jiaanjiepdf,true)"/>
-            </div>
-            <div style="margin:10px;display:flex;flex-direction:row;padding-left:30px">
-                <div>电子书</div>
-                <input type="text" :value="jianjiebook" style="margin-left:20px;flex:1"/>
-                <input type="button" value="选择"  @click="selectFile(s_jianjiebook,false)"/>
-            </div>
-            <div style="line-height:30px">瀚华宣传画册</div>
-            <div style="margin:10px;display:flex;flex-direction:row;padding-left:30px">
-                <div >pdf</div>
-                <input style="flex:1;margin-left:20px" type="text" :value="huacepdf" /> 
-                  <input type="button" value="选择"  @click="selectFile(s_huacepdf,true)"/>
-            </div>
-            <div style="margin:10px;display:flex;flex-direction:row;padding-left:30px">
-                <div>电子书</div>
-                <input type="text" :value="huacebook" style="margin-left:20px;flex:1"/>
-                <input type="button" value="选择"  @click="selectFile(s_huacebook,false)"/>
-            </div>
-                <div style="line-height:30px">瀚华宣传片</div>
-            <div style="margin:10px;display:flex;flex-direction:row;padding-left:30px">
-                <div >MP4</div>
-                <input style="flex:1;margin-left:20px" type="text" :value="xuanchuapian" />
-                 <input type="button" value="选择"  @click="selectFile(s_xuanchuapian,true)"/>
-            </div>
-             -->
+          
             <input style="margin-top:20px;margin-left:20px;width:500px;border:1px solid red;line-height:30px;padding-left:20px"   placeholder = "输入要创建的内容名称" type="text" :value="inputValue"   @input = 'inputchange' />
              <div> 
                  <input type="button" value="添加视频" style="width:200px;margin:20px"  @click="addVideo"/>
@@ -177,43 +149,7 @@ export default {
          base(){
              return `重要项目/${this.xmlist}/${this.xm}`
          }
-        // jiaanjiepdf(){
-        //     console.log('----')
-            
-        //     if(this.currentRoute === '瀚华简介' && this.ii){
-        //         return checkFilePath(app,'瀚华简介/瀚华金融简介.pdf',true)
-        //     }else{
-        //         return ''
-        //     }
-        // },
-        // jianjiebook(){
-        //     if(this.currentRoute === '瀚华简介' && this.ii){
-        //         return checkFilePath(app,'瀚华简介/瀚华金融简介',false)
-        //     }else{
-        //         return ''
-        //     }
-        // },
-        // huacepdf(){
-        //     if(this.currentRoute === '瀚华简介' && this.ii){
-        //         return checkFilePath(app,'瀚华简介/瀚华宣传画册.pdf',true)
-        //     }else{
-        //         return ''
-        //     }
-        // },
-        // huacebook(){
-        //     if(this.currentRoute === '瀚华简介' && this.ii){
-        //         return checkFilePath(app,'瀚华简介/瀚华宣传画册',false)
-        //     }else{
-        //         return ''
-        //     }
-        // },
-        //   xuanchuapian(){
-        //     if(this.currentRoute === '瀚华简介' && this.ii){
-        //         return checkFilePath(app,'瀚华简介/瀚华宣传片.mp4',true)
-        //     }else{
-        //         return ''
-        //     }
-        // }
+     
     },
 }
 </script>
