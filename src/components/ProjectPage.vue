@@ -8,7 +8,7 @@
         <img draggable="false" class="bg" :src="bg">
 
         <div :style="contentStyle">
-            <div :style="labelStyle" v-for="(label,index) in labels" v-bind:key="index" @click="tapHandler(index)">           
+            <div :style="labelStyle" v-for="(label,index) in curLabels" v-bind:key="index" @click="tapHandler(index)">           
                 <img draggable="false" width ='224'  height="220" style="width:224px;height:220px"  :src="label.icon" />
                 <span style="margin-top:-50px;text-shadow: 0.1em 0.1em 0.1em #333;font-weight:bold">{{label.name.split('.')[0]}}</span>
             </div>
@@ -190,6 +190,14 @@ export default {
             this.column = column
             this.pageSize = row*column
             this.pages = Math.ceil(this.count/this.pageSize)
+            console.log("===================!!!!!!!!!!!!!",row,column,this.pageSize)
+
+            if(this.count<this.pageSize){
+                this.curLabels = this.labels
+            }else{
+                this.curLabels = this.labels.slice(0,this.pageSize)
+            }
+
             this.curLabels = this.labels 
             return 
             }
@@ -278,7 +286,13 @@ export default {
             this.column = column
             this.pageSize = row*column
             this.pages = Math.ceil(this.count/this.pageSize)
-            this.curLabels = this.labels
+
+             if(this.count<this.pageSize){
+                this.curLabels = this.labels
+            }else{
+                this.curLabels = this.labels.slice(0,this.pageSize)
+            }
+            // this.curLabels = this.labels
 
         },
 
