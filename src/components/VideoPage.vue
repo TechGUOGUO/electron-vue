@@ -1,5 +1,5 @@
 <template>
-    <div class="bundlePage" :style="visibleStyle" @click="fullClick">
+    <div id="abcd" class="bundlePage" :style="visibleStyle" @click="fullClick">
          <div :style="titleStyle">{{playName}}</div>
         <div class='ab' :style="videoContainer">
 
@@ -47,6 +47,10 @@ export default {
         setTimeout(()=>{
             this.full()
         },200)
+     
+
+
+
     },
     watch:{
         pageParam(val){

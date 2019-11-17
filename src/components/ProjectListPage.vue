@@ -1,7 +1,7 @@
 <template>
     <div class="bundlePage" :style="visibleStyle" @click="fullClick"> 
         <template v-for="(button,index) in buttons">
-            <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
+            <EButton :config = 'button' :currentIndex="curPage" :totalPage ="pages" :key="index" @buttonAction="buttonHandler"/> 
         </template>
         <div v-if="title" :style="titleStyle">{{title}}</div>
         <img draggable="false" class="bg" :src="bg">
@@ -48,6 +48,8 @@ export default {
     },
     watch:{ 
         pageParam(val){
+            let buttons = _.get(this.config,'config.buttons')
+            this.buttons = buttons
             if(val && val.pageName == 'showProject'){
                 console.log(val)
 

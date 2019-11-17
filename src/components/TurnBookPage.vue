@@ -125,8 +125,9 @@ console.log('==============loadapp')
 			// Auto center this flipbook
 
             autoCenter: true,
-            cornerSize: 300,
-            duration :1200
+            cornerSize: 500,
+            duration :1200,
+            turnCorners: 'bl,br',
 
     });
      // $('.flipbook').turn('page',1);

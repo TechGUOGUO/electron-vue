@@ -1,5 +1,5 @@
 <template>
-    <div v-if="visible" :style="imageStyle" @mousedown="clickHandler" @mouseleave="leaveHandler" @mouseup="upHandler">
+    <div v-show="visible" :style="imageStyle" @mousedown="clickHandler" @mouseleave="leaveHandler" @mouseup="upHandler">
         <img draggable="false" v-if="!isPressDown" width="100%" height="100%" :src="normalUrl" > 
         <img draggable="false" v-if="isPressDown" width ='100%' height="100%" :src="pressedUrl" >
     </div>
@@ -9,7 +9,7 @@ import {resolveAssets,rw,rh} from '../utils/utils'
 import _ from 'lodash'
 const {app} = window.electron.remote
 export default {
-    props:['config','zIndex','currentIndex'],
+    props:['config','zIndex','currentIndex','totalPage'],
     data(){
         return {
             isPressDown:false,
@@ -18,17 +18,51 @@ export default {
     },
     mounted(){
         if(this.config.visible){
+                if(this.config.visible == 'pageNext'){
+                    if(this.currentIndex == this.totalPage){
+                        this.visible = false
+                    }else{
+                        this.visible = true
+                    }
+                    return 
+                }
+                if(this.config.visible == 'pagePre'){
+                    if(this.currentIndex == 1){
+                        this.visible =false
+                    }else{
+                        this.visible =true
+                    }
+                    return 
+                }
                 if(this.config.visible.type=="大于等于"){
                     this.visible =  this.currentIndex>=this.config.visible.value
+                    return 
                 }
                 if(this.config.visible.type=="小于等于"){
                     this.visible= this.currentIndex<=this.config.visible.value
+                    return 
                 }
             }
     },
     watch:{
         currentIndex(val){
             console.log(val)
+             if(this.config.visible == 'pageNext'){
+                    if(this.currentIndex == this.totalPage){
+                        this.visible = false
+                    }else{
+                        this.visible = true
+                    }
+                    return 
+                }
+                if(this.config.visible == 'pagePre'){
+                    if(this.currentIndex == 1){
+                        this.visible =false
+                    }else{
+                        this.visible =true
+                    }
+                    return 
+                }
             if(this.config.visible){
                 if(this.config.visible.type=="大于等于"){
                     console.log(val, this.config.visible.value)

@@ -1,7 +1,7 @@
 <template>
     <div class="bundlePage" :style="visibleStyle" @click="fullClick"> 
         <template v-for="(button,index) in buttons">
-            <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
+            <EButton :config = 'button' :currentIndex="curPage" :totalPage ="pages" :key="index" @buttonAction="buttonHandler"/> 
         </template>
         <img draggable="false" class="bg" :src="bg">
 

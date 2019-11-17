@@ -1,7 +1,7 @@
 <template>
     <div class="bundlePage" :style="visibleStyle" @click="fullClick"> 
         <template v-for="(button,index) in buttons">
-            <EButton :config = 'button' :key="index" @buttonAction="buttonHandler"/> 
+            <EButton :config = 'button' :currentIndex="curPage" :totalPage = "pages"  :key="index" @buttonAction="buttonHandler"/> 
         </template>
         
         <div v-if="title" :style="titleStyle">{{title}}</div>
@@ -82,6 +82,8 @@ export default {
             if(val.pageName!=="project") return 
             console.log("!!!!!!!!!!!!!!!,",val)
             this.setData(val)
+            let buttons = _.get(this.config,'config.buttons')
+             this.buttons = buttons
         }
     },
 
@@ -125,7 +127,7 @@ export default {
             list.push(`font-weight:${_.get(this.config,'config.content.item.fontWeight')}`)
             list.push(`justify-content:flex-start`)
             list.push('align-items:center')
-            list.push(`width: 33%`)
+            list.push(`flex:1`)
             list.push(`height:${rh(_.get(this.config,'config.content.item.h'))}`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
@@ -135,8 +137,6 @@ export default {
 
     },
     methods:{
-
-        
         setData(params){
             
              let labels;
@@ -183,7 +183,7 @@ export default {
             this.labels = t ;
           
             
-            this.count = labels.list.length
+            this.count = this.labels.length
             
             let row = _.get(this.config,'config.content.row')
             let column = _.get(this.config,'config.content.column')
@@ -198,7 +198,7 @@ export default {
                 this.curLabels = this.labels.slice(0,this.pageSize)
             }
 
-            this.curLabels = this.labels 
+            // this.curLabels = this.labels 
             return 
             }
             if(!params || !params.list){
@@ -279,7 +279,7 @@ export default {
             this.labels = t ;
           
             
-            this.count = labels.list.length
+            this.count = this.labels.length
             
             let row = _.get(this.config,'config.content.row')
             let column = _.get(this.config,'config.content.column')
