@@ -126,8 +126,18 @@ export default {
             list.push('position:absolute')
             list.push(`width:${rw(this.config.width)}`)
             list.push(`height:${rh(this.config.height)}`)
-            list.push(`left:${rw(this.config.x)}`)
-            list.push(`top:${rh(this.config.y)}`)
+            if(this.config.x || this.config.x == 0){
+                list.push(`left:${rw(this.config.x)}`)
+            }else{
+                list.push(`right:20px`)   
+            } 
+            if(this.config.y || this.config.y == 0) {
+                
+                list.push(`top:${rh(this.config.y)}`)
+             }else{
+                 list.push(`bottom:20px`)
+
+             } 
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
            //console.log(style)

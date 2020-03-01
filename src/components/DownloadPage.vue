@@ -115,7 +115,7 @@ export default {
 
     methods:{
         showQrcode(index){
-           //console.log(index)
+           console.log(index)
         },
         buttonHandler(e){
  

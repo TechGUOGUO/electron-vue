@@ -9,6 +9,14 @@
         @routeTo= "routeTo" 
         :key= "page.name">
       </SimplePage>
+       <CarousePage 
+        v-if="page.type=='carouse'" 
+        :from="from"
+        :visible = "currentPage==page.name" 
+        :config = "page"  
+        @routeTo= "routeTo" 
+        :key= "page.name">
+      </CarousePage>
        <ModePage 
         v-if="page.type=='pic_button_3'" 
         :from="from"
@@ -191,6 +199,10 @@ import ProjectListPage from './components/ProjectListPage'
 import ProjectPage from './components/ProjectPage'
 import ModePage from './components/Mode'
 import FlipBookPage from './components/FlipBookPage'
+import CarousePage from './components/Carouse'
+import 'view-design/dist/styles/iview.css';
+
+
 import TurnBookPage from './components/TurnBookPage'
 const {app} = window.electron.remote
 const config = getConfig(app)
@@ -246,7 +258,8 @@ export default {
     PicPageWName,
     ModePage,
     FlipBookPage,
-    TurnBookPage
+    TurnBookPage,
+    CarousePage
   }
 
 }
