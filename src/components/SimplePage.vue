@@ -25,14 +25,14 @@ export default {
         }
     },
     mounted(){
-        console.log(this.config)
+       //console.log(this.config)
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
         this.qr = _.get(this.config,'config.qr')
         if(this.qr){
                 QRCode.toDataURL(this.qr.url, (err, url) =>{
-                                console.log(url)
+                               //console.log(url)
                    this.qrcodeimg = url 
                 })
         }
@@ -52,7 +52,7 @@ export default {
             list.push(`height:${rh(_.get(this.config,'config.qr.height'))}`)
             list.push('z-index:1')
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
       }
     },

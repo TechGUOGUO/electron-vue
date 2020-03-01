@@ -71,14 +71,14 @@ export default {
          this.icon = resolveAssets(app,_.get(this.config,'config.content.item.icon'))
            if(this.from &&this.from!='projectList' &&  this.from !='showProject'){
                 this.ff = this.from
-                console.log('====set ddd',this.ff)
+               //console.log('====set ddd',this.ff)
             }
     },
     watch:{
         from(val){
-            console.log(val)
+           //console.log(val)
             if(val && val!='projectList'  && val!='showProject'){
-                console.log('=====setff',val)
+               //console.log('=====setff',val)
                 this.ff = val
             }
         }
@@ -125,7 +125,7 @@ export default {
     },
     methods:{
         buttonHandler(e){
-            console.log("=============",e.type)
+           //console.log("=============",e.type)
            
             if(e.type=="routeTo"){
                 if(e.options.path === 'main'){
@@ -143,7 +143,7 @@ export default {
                     return 
                 }
                 if(e.options.action === 'back'){
-                    console.log('------------------------')
+                   //console.log('------------------------')
                     this.curPage = 1
                     let start = (this.curPage-1)*this.pageSize
                     let end = this.curPage * this.pageSize
@@ -189,7 +189,7 @@ export default {
         tapHandler(index){ 
             let rindex = (this.curPage-1)*this.pageSize +index 
 
-            console.log("==================================tap",index)
+           //console.log("==================================tap",index)
             this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{pageName:_.get(this.config,'config.content.to'),index:rindex,list:this.labels}})
              
         }

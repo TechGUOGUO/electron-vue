@@ -58,7 +58,7 @@ export default {
           }
       },
         currentUrl(){
-            console.log(this.pics,this.currentIndex)
+           //console.log(this.pics,this.currentIndex)
             return this.pics[this.currentIndex] || ''
         }
     },

@@ -44,13 +44,13 @@ export default {
         }
     },
     destroyed(){
-        console.log('==========================desptry')
+       //console.log('==========================desptry')
     },
     mounted(){
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
-        console.log('------mounted',window.Modernizr.csstransforms)
+       //console.log('------mounted',window.Modernizr.csstransforms)
         // setTimeout(()=>{
         //     window.yepnope({
         //     test : window.Modernizr.csstransforms,
@@ -70,7 +70,7 @@ export default {
            if(typeof this.pageParam === 'string' && this.pageParam){
               let p  = this.pageParam.replace('.pdf','')
               let content = getFolderContent(app,p,true);
-              console.log('!!!!!!!!!!!!!',content)
+            //   console.log('!!!!!!!!!!!!!',content )
               if(!content.error){
                   return  content.list
               }else{
@@ -81,11 +81,11 @@ export default {
           }
       },
       url(){ 
-          console.log(this.pageParam)
+         //console.log(this.pageParam)
           if(typeof this.pageParam === 'string' && this.pageParam){
               let p  = this.pageParam.replace('.pdf','')
             //   this.pages = getFolderContent(app,p);
-            //   console.log(this.pages);
+            //  //console.log(this.pages);
               return p.indexOf(':')>=0 ? this.pageParam : resolveAssets(app,this.pageParam)
           }else{
               return ""

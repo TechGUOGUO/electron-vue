@@ -1,7 +1,7 @@
 <template>
     <div class="bundlePage" :style="visibleStyle" @click="fullClick"> 
         <template v-for="(button,index) in buttons">
-            <EButton :config = 'button' :currentIndex="curPage" :totalPage = "pages"  :key="index" @buttonAction="buttonHandler"/> 
+            <EButton :config = 'button' pageName="project" :currentIndex="curPage" :totalPage = "pages"  :key="index" @buttonAction="buttonHandler"/> 
         </template>
         
         <div v-if="title" :style="titleStyle">{{title}}</div>
@@ -40,7 +40,7 @@ export default {
         }
     },
     mounted(){
-        console.log(this.config)
+       //console.log(this.config)
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
@@ -57,7 +57,7 @@ export default {
         //     return 
         // }
         // this.labels = labels.list
-        // console.log('====labels',labels)
+        ////console.log('====labels',labels)
         // this.count = labels.list.length
         
         // let row = _.get(this.config,'config.content.row')
@@ -73,17 +73,18 @@ export default {
         // }
 
         //  this.icon = resolveAssets(app,_.get(this.config,'config.content.item.icon'))
- 
+        console.log(this.pageParam)
        this.setData(this.pageParam)
     },
     watch:{
         pageParam(val){
             if(!val) return 
             if(val.pageName!=="project") return 
-            console.log("!!!!!!!!!!!!!!!,",val)
-            this.setData(val)
+           console.log("!!!!!!!!!!!!!!!,",val)
             let buttons = _.get(this.config,'config.buttons')
-             this.buttons = buttons
+            this.buttons = buttons
+            this.setData(val)
+         
         }
     },
 
@@ -140,66 +141,67 @@ export default {
         setData(params){
             
              let labels;
-              console.log("setData+++++++++++++++++++++++++++++++++", params)
+             //console.log("setData+++++++++++++++++++++++++++++++++", params)
             let configItems = _.get(this.config,'config.content.items')
+           console.log("dgsgasdg",configItems)
             if(configItems){
-                 labels = getFolderContent(app, configItems)
-             console.log('labels',labels.list)
-            if(labels.error){
-                console.error(labels)
-                return 
-            }
-            let t = []
-            labels.list.forEach(f=>{
-                console.log(f.name)
-                if(f.url.indexOf('.')<0){
-                    t.push({
-                        name:f.name,
-                        icon: this.getIcon('pic'),
-                        url: f.url,
-                        type:'folder'
-                    })
-                }else{
-                    let ext = f.url.split('.')[1]
-                    if(['mp4','mov'].indexOf(ext.toLowerCase())>=0){
-                        t.push({
-                            name: f.name,
-                            icon:this.getIcon('mp4'),
-                            url:f.url,
-                            type:'video'
-                        })
-                    }
-                    if(['pdf'].indexOf(ext.toLowerCase())>=0){
+                labels = getFolderContent(app, configItems)
+               //console.log('labels',labels.list)
+                if(labels.error){
+                    console.error(labels)
+                    return 
+                }
+                let t = []
+                labels.list.forEach(f=>{
+                   //console.log(f.name)
+                    if(f.url.indexOf('.')<0){
                         t.push({
                             name:f.name,
-                            icon: this.getIcon('pdf'),
-                            url:f.url,
-                            type: 'pdf'
+                            icon: this.getIcon('pic'),
+                            url: f.url,
+                            type:'folder'
                         })
+                    }else{
+                        let ext = f.url.split('.')[1]
+                        if(['mp4','mov'].indexOf(ext.toLowerCase())>=0){
+                            t.push({
+                                name: f.name,
+                                icon:this.getIcon('mp4'),
+                                url:f.url,
+                                type:'video'
+                            })
+                        }
+                        if(['pdf'].indexOf(ext.toLowerCase())>=0){
+                            t.push({
+                                name:f.name,
+                                icon: this.getIcon('pdf'),
+                                url:f.url,
+                                type: 'pdf'
+                            })
+                        }
                     }
+                })
+
+                this.labels = t ;
+            
+                
+                this.count = this.labels.length
+                
+                let row = _.get(this.config,'config.content.row')
+                let column = _.get(this.config,'config.content.column')
+                this.column = column
+                this.pageSize = row*column
+                this.pages = Math.ceil(this.count/this.pageSize)
+               //console.log("===================!!!!!!!!!!!!!",row,column,this.pageSize)
+
+                if(this.count<this.pageSize){
+                    this.curLabels = this.labels
+                }else{
+                    this.curLabels = this.labels.slice(0,this.pageSize)
                 }
-            })
 
-            this.labels = t ;
-          
-            
-            this.count = this.labels.length
-            
-            let row = _.get(this.config,'config.content.row')
-            let column = _.get(this.config,'config.content.column')
-            this.column = column
-            this.pageSize = row*column
-            this.pages = Math.ceil(this.count/this.pageSize)
-            console.log("===================!!!!!!!!!!!!!",row,column,this.pageSize)
-
-            if(this.count<this.pageSize){
-                this.curLabels = this.labels
-            }else{
-                this.curLabels = this.labels.slice(0,this.pageSize)
-            }
-
-            // this.curLabels = this.labels 
-            return 
+                // this.curLabels = this.labels 
+                return 
             }
             if(!params || !params.list){
                 this.labels = [];
@@ -216,7 +218,7 @@ export default {
             let list = params.list;
 
             let path = list[index];
-            console.log('===========================path',path)
+           //console.log('===========================path',path)
              if(!path){
                 this.labels = [];
                 this.count = 0;
@@ -240,14 +242,14 @@ export default {
                  return 
              }
              labels = getFolderContent(null, path.url)
-             console.log('labels',labels.list)
+            //console.log('labels',labels.list)
             if(labels.error){
                 console.error(labels)
                 return 
             }
             let t = []
             labels.list.forEach(f=>{
-                console.log(f.name)
+               //console.log(f.name)
                 if(f.url.indexOf('.')<0){
                     t.push({
                         name:f.name,
@@ -276,9 +278,7 @@ export default {
                 }
             })
 
-            this.labels = t ;
-          
-            
+            this.labels = t ; 
             this.count = this.labels.length
             
             let row = _.get(this.config,'config.content.row')
@@ -292,6 +292,7 @@ export default {
             }else{
                 this.curLabels = this.labels.slice(0,this.pageSize)
             }
+           console.log(this.curLabels,this.pages,this.curPage,this.count)
             // this.curLabels = this.labels
 
         },
@@ -357,10 +358,10 @@ export default {
         },
 
         tapHandler(index){ 
-            // let rindex = (this.curPage-1)*this.pageSize +index 
+             let rindex = (this.curPage-1)*this.pageSize +index 
 
-            console.log("==================================tap",index)
-            let item = this.labels[index]
+           console.log("==================================tap",rindex)
+            let item = this.labels[rindex]
             if(item.type ==='folder') { //  效果图
                 let list = getFolderContent(null,item.url).list
                this.$emit('routeTo',{

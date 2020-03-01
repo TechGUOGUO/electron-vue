@@ -34,7 +34,7 @@ export default {
         }
     },
     mounted(){
-        console.log(this.config)
+       //console.log(this.config)
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
@@ -81,7 +81,7 @@ export default {
             list.push(`text-align:center`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         },
 
@@ -96,7 +96,7 @@ export default {
             //list.push(`margin:auto`)
             list.push('z-index:1')
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         },
 
@@ -111,7 +111,7 @@ export default {
 
             list.push('z-index:1')
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         }
 
@@ -119,7 +119,7 @@ export default {
     },
     watch:{
        pageParam(val){
-           console.log('=================www')
+          //console.log('=================www')
            this.currentIndex = val.index;
            this.songs = val.songs
        },
@@ -127,7 +127,7 @@ export default {
            let song = this.songs[val] 
            if(song){ 
                QRCode.toDataURL(`http://www.guoyingxu.com/download/music?name=${encodeURI(song.name)}&url=${encodeURI(song.url)}`, (err, url) =>{
-                   console.log(url)
+                  //console.log(url)
                this.qrcodeimg = url 
             })
            }
@@ -136,7 +136,7 @@ export default {
 
     methods:{
         buttonHandler(e){
-            console.log("AudioPage",e)
+           //console.log("AudioPage",e)
           
             if(e.type=="actionTo"){ 
                 if(e.options.action == 'back'){

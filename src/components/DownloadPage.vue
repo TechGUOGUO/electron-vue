@@ -48,7 +48,7 @@ export default {
         }
     },
     mounted(){
-        console.log(this.config)
+       //console.log(this.config)
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
@@ -59,13 +59,13 @@ export default {
         
         this.pageSize = _.get(this.config,'config.content.pageSize')
         this.pages = Math.floor(this.count/this.pageSize) + (this.count%this.pageSize == 0 ? 0 :1)
-        console.log(this.pages)
+       //console.log(this.pages)
         if(this.count<this.pageSize){
             this.curLabels = this.labels
         }else{
             this.curLabels = this.labels.slice(0,this.pageSize)
         }
-        console.log('====curlables',this.curLabels.length)
+       //console.log('====curlables',this.curLabels.length)
          
     },
 
@@ -89,7 +89,7 @@ export default {
             list.push(`top:${rh(_.get(this.config,'config.content.y'))}`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         },
  
@@ -106,7 +106,7 @@ export default {
             list.push(`height:${rh(_.get(this.config,'config.content.item.height'))}`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         }
 
@@ -115,7 +115,7 @@ export default {
 
     methods:{
         showQrcode(index){
-            console.log(index)
+           //console.log(index)
         },
         buttonHandler(e){
  
@@ -132,19 +132,19 @@ export default {
                          this.curLabels = this.labels.slice(0,this.pageSize)
                     this.$emit('routeTo',this.from)
                 }else{
-                    console.log(e.options.action === 'next',this.curPage,this.pages)
+                   //console.log(e.options.action === 'next',this.curPage,this.pages)
                     if(e.options.action == 'pre' && this.curPage > 1){
-                        console.log('pre')
+                       //console.log('pre')
                         this.curPage = this.curPage - 1
                     }else if(e.options.action == 'next' && this.curPage < this.pages){
-                        console.log('next')
+                       //console.log('next')
                         this.curPage = this.curPage + 1
                     }
-                    console.log(this.curPage)
+                   //console.log(this.curPage)
                     let start = (this.curPage-1)*this.pageSize
                     let end = this.curPage * this.pageSize
                     this.curLabels = this.labels.slice(start,end)
-                    console.log('=====================pre',this.curLabels)
+                   //console.log('=====================pre',this.curLabels)
                 }
 
             }

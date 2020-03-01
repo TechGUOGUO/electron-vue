@@ -52,7 +52,7 @@ export default {
                let temp= fs.readdirSync(folder)  
                p = temp.map(pi=> "file://"+ join(folder,pi))
             }catch(e){
-                console.log(e)
+               //console.log(e)
             }
             return p
           }else{
@@ -64,7 +64,7 @@ export default {
            let rect = _.get(this.config,'config.rect')
           if(rect){
                 list.push(`background:gray`)
-                console.log(rw(rect.width),rh(rect.height))
+               //console.log(rw(rect.width),rh(rect.height))
             list.push(`width:${rw(rect.width)/1.5}`)
             list.push(`height:${rh(rect.height)/1.5}`)
             return list.join(';')
@@ -75,7 +75,7 @@ export default {
       cwidth(){
           let rect = _.get(this.config,'config.rect')
           if(rect){
-              console.log(rw(rect.width))
+             //console.log(rw(rect.width))
               return rw(rect.width)
 
           }
@@ -84,7 +84,7 @@ export default {
        cheight(){
           let rect = _.get(this.config,'config.rect')
           if(rect){
-              console.log(rect)
+             //console.log(rect)
               return rh(rect.height)
           }
           return 0
@@ -92,7 +92,7 @@ export default {
     },
     methods:{
         clickhandler(isCurrent,index){
-            console.log('cloclk',isCurrent)
+           //console.log('cloclk',isCurrent)
             let rect = _.get(this.config,'config.rect')
           if(rect){
               if(isCurrent){

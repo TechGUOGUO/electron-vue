@@ -24,7 +24,7 @@ if(isDevelopment){
 }
 // app.setName('清镇法条');
 // app.setName('gaokao')
-app.setName('瀚华软件book版')
+app.setName('lunbo')
 app.setPath('appData',staticFolder)
 
 
@@ -33,7 +33,7 @@ app.setPath('appData',staticFolder)
  
   
 // //console.log(app.getPath('pepperFlashSystemPlugin'))
-// console.log(ppfp)
+////console.log(ppfp)
 // app.commandLine.appendSwitch('ppapi-flash-path',ppfp); 
 // app.commandLine.appendSwitch('ppapi-flash-version', '30.0.0.113');
 
@@ -115,7 +115,7 @@ app.on('ready', async () => {
       message:`您确认要删除${arg1}?`,
       buttons:['取消','确定']
     })
-    console.log(d)
+   //console.log(d)
     if(d == 1){
       let p1 = resolvePath(arg1)
       if(arg2)
@@ -130,7 +130,7 @@ app.on('ready', async () => {
   ipcMain.on('delAllfile',(event,arg1)=>{
 
     // let n = basename(arg1)
-    // console.log(n)
+    ////console.log(n)
     let d =dialog.showMessageBoxSync({
       title:'删除',
       message:`您确认要删除${arg1}?`,
@@ -138,7 +138,7 @@ app.on('ready', async () => {
     })
     if(d == 1){
       let p1 = resolvePath(arg1)
-      console.log(p1)
+     //console.log(p1)
       delDir(p1) 
       if(fs.existsSync(p1+'.pdf')){
         fs.unlinkSync(p1+'.pdf')
@@ -159,21 +159,21 @@ app.on('ready', async () => {
       fs.mkdirSync(resolvePath(arg1))
       changeJson('add',dirname(p),basename(p))
     }catch(e){
-      console.log(e)
+     //console.log(e)
       event.returnValue = 'fail'
       return
     }
     event.returnValue = 'success'
   })
    function changeJson(cmd,src,key){
-     console.log(cmd,src,key)
+    //console.log(cmd,src,key)
     let json = {}
     try{
       let str =   fs.readFileSync(src+'/order.json').toString()
       json = JSON.parse(str)
     }catch(e){
       json = {list:[]}
-      console.log(e)
+     //console.log(e)
     }
     let name = key.split('.')[0]
     switch(cmd){
@@ -187,19 +187,19 @@ app.on('ready', async () => {
         if(index>=0){
           json.list.splice(index,1);
         }
-        console.log(json)
+       //console.log(json)
         break;
       default: break;
     }
-    console.log(json)
+   //console.log(json)
     try{ 
         fs.writeFileSync(src+'/order.json',JSON.stringify(json))
     }catch(e){
-      console.log(e)
+     //console.log(e)
     }
   }
   ipcMain.on('addFile',(event,arg1,arg2)=>{
-    console.log('addfile')
+   //console.log('addfile')
     let properties  = arg2 ? ['openFile'] : ['openDirectory']
     let path = dialog.showOpenDialogSync(win, {
       properties:properties
@@ -216,7 +216,7 @@ app.on('ready', async () => {
            fs.copyFileSync(src, dist);
           changeJson('add',p,filename)
         }catch(e){
-          console.log(e)
+         //console.log(e)
           dialog.showMessageBoxSync(win,{
             title:"错误",
             message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
@@ -224,7 +224,7 @@ app.on('ready', async () => {
           event.returnValue = 'faild'
         }
       }else{
-        console.log(path)
+       //console.log(path)
         let folder = path[0]
         try{
           let distfolder = resolvePath(arg1);
@@ -237,14 +237,14 @@ app.on('ready', async () => {
             fs.mkdirSync(distfolder)
           }
           let files = fs.readdirSync(folder);
-          console.log(files)
+         //console.log(files)
           files.forEach(name=>{
             if(name.indexOf('.')>=0)
             fs.copyFileSync(join(folder,name),join(resolvePath(arg1),name))
           })
           changeJson('add',dirname(distfolder),basename(distfolder))
         }catch(e){
-          console.log(e)
+         //console.log(e)
           dialog.showMessageBoxSync(win,{
             title:"错误",
             message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
@@ -257,7 +257,7 @@ app.on('ready', async () => {
     event.returnValue = 'success'
   })
   ipcMain.on('relaunch',()=>{
-    console.log('-----relaunch')
+   //console.log('-----relaunch')
     dialog.showMessageBoxSync(win,{
       title:'提示',
       message:'请重新启动应用，是当前编辑生效'
@@ -265,7 +265,7 @@ app.on('ready', async () => {
     app.quit()
   })
   ipcMain.on('selectFile',(event,arg1,arg2)=>{
-    console.log(arg1,arg2)
+   //console.log(arg1,arg2)
     let properties  = arg2 ? ['openFile'] : ['openDirectory']
     let path = dialog.showOpenDialogSync(win, {
       properties:properties
@@ -288,7 +288,7 @@ app.on('ready', async () => {
         }
         changeJson('add',dirname(p),basename(p))
       }else{
-        console.log(path)
+       //console.log(path)
         let folder = path[0]
         try{
           let distfolder = resolvePath(arg1);
@@ -301,13 +301,13 @@ app.on('ready', async () => {
             fs.mkdirSync(distfolder)
           }
           let files = fs.readdirSync(folder);
-          console.log(files)
+         //console.log(files)
           files.forEach(name=>{
             fs.copyFileSync(join(folder,name),join(resolvePath(arg1),name))
           })
           changeJson('add',dirname(distfolder),basename(distfolder))
         }catch(e){
-          console.log(e)
+         //console.log(e)
           dialog.showMessageBoxSync(win,{
             title:"错误",
             message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'

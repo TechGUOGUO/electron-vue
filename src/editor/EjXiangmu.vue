@@ -47,7 +47,7 @@ export default {
             this.$emit('returnback')
         },
         edit(v){
-            console.log(v)
+           //console.log(v)
             this.$emit('xm',v)
         },
        delFile(path, isFile){
@@ -58,12 +58,12 @@ export default {
             }
         },
         inputchange(e){
-            console.log(e.target.value)
+           //console.log(e.target.value)
             this.newxm = e.target.value
         },
         refre(){
             this.refresh = this.refresh + 1
-            console.log(this.refresh)
+           //console.log(this.refresh)
             this.ii =false;
             this.$nextTick(()=>{
                 this.ii = true
@@ -71,9 +71,9 @@ export default {
         },
         selectFile(path,isFile){
            let res = window.electron.ipcRenderer.sendSync('selectFile',path,isFile); 
-           console.log(res)
+          //console.log(res)
             if(res == 'success'){
-                console.log('=====refresh')
+               //console.log('=====refresh')
                 this.refresh = this.refresh +1
               this.refre()
             }
@@ -82,7 +82,7 @@ export default {
             if(this.newxm == '') return 
             let res  = window.electron.ipcRenderer.sendSync('addFolder',`${this.base}/${this.newxm}`,false);
             if(res == 'success'){
-                  console.log('=====refresh')
+                 //console.log('=====refresh')
                 this.refresh = this.refresh +1
               this.refre()
             }
@@ -90,7 +90,7 @@ export default {
     },
      computed:{
          base(){
-             console.log( `重要项目/${this.xmlist}`)
+            //console.log( `重要项目/${this.xmlist}`)
              return `重要项目/${this.xmlist}`
          },
          list(){

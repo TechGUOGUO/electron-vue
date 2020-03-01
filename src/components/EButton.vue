@@ -1,5 +1,5 @@
 <template>
-    <div v-show="visible" :style="imageStyle" @mousedown="clickHandler" @mouseleave="leaveHandler" @mouseup="upHandler">
+    <div v-if="visible" :style="imageStyle" @mousedown="clickHandler" @mouseleave="leaveHandler" @mouseup="upHandler">
         <img draggable="false" v-if="!isPressDown" width="100%" height="100%" :src="normalUrl" > 
         <img draggable="false" v-if="isPressDown" width ='100%' height="100%" :src="pressedUrl" >
     </div>
@@ -9,7 +9,7 @@ import {resolveAssets,rw,rh} from '../utils/utils'
 import _ from 'lodash'
 const {app} = window.electron.remote
 export default {
-    props:['config','zIndex','currentIndex','totalPage'],
+    props:['config','zIndex','currentIndex','totalPage',"pageName"],
     data(){
         return {
             isPressDown:false,
@@ -24,6 +24,7 @@ export default {
                     }else{
                         this.visible = true
                     }
+                     console.log("currentIndex",this.pageName,this.currentIndex,this.visible)
                     return 
                 }
                 if(this.config.visible == 'pagePre'){
@@ -32,6 +33,7 @@ export default {
                     }else{
                         this.visible =true
                     }
+                     console.log("currentIndex",this.pageName,this.currentIndex,this.visible)
                     return 
                 }
                 if(this.config.visible.type=="大于等于"){
@@ -45,14 +47,15 @@ export default {
             }
     },
     watch:{
-        currentIndex(val){
-            console.log(val)
+        totalPage(val){
+           console.log("wathc@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",val)
              if(this.config.visible == 'pageNext'){
                     if(this.currentIndex == this.totalPage){
                         this.visible = false
                     }else{
                         this.visible = true
                     }
+                    //console.log("currentIndex",this.pageName,val,this.visible)
                     return 
                 }
                 if(this.config.visible == 'pagePre'){
@@ -61,19 +64,55 @@ export default {
                     }else{
                         this.visible =true
                     }
+                     //console.log("currentIndex",this.pageName,val,this.visible)
                     return 
                 }
             if(this.config.visible){
                 if(this.config.visible.type=="大于等于"){
-                    console.log(val, this.config.visible.value)
+                   //console.log(val, this.config.visible.value)
                     this.visible =  val>=this.config.visible.value
                 }
                 if(this.config.visible.type=="小于等于"){
-                       console.log(val, this.config.visible.value)
+                      //console.log(val, this.config.visible.value)
                     this.visible= val<=this.config.visible.value
                 }
             }
+ 
+        },
+        currentIndex(val){
+              console.log("watcg@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",val)
+          //console.log(val)
+             if(this.config.visible == 'pageNext'){
+                    if(this.currentIndex == this.totalPage){
+                        this.visible = false
+                    }else{
+                        this.visible = true
+                    }
+                    //console.log("currentIndex",this.pageName,val,this.visible)
+                    return 
+                }
+                if(this.config.visible == 'pagePre'){
+                    if(this.currentIndex == 1){
+                        this.visible =false
+                    }else{
+                        this.visible =true
+                    }
+                     //console.log("currentIndex",this.pageName,val,this.visible)
+                    return 
+                }
+            if(this.config.visible){
+                if(this.config.visible.type=="大于等于"){
+                   //console.log(val, this.config.visible.value)
+                    this.visible =  val>=this.config.visible.value
+                }
+                if(this.config.visible.type=="小于等于"){
+                      //console.log(val, this.config.visible.value)
+                    this.visible= val<=this.config.visible.value
+                }
+            }
+
         }
+
     },
     computed:{
         normalUrl(){
@@ -91,7 +130,7 @@ export default {
             list.push(`top:${rh(this.config.y)}`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style
         }
     },

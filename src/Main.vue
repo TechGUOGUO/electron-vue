@@ -8,7 +8,7 @@
 export default {
     mounted(){
         window.electron.ipcRenderer.on('editor', (event ) => {
-            console.log(event) // Prints 'whoooooooh!'
+           //console.log(event) // Prints 'whoooooooh!'
             this.$router.push('/editor')
         })
     }

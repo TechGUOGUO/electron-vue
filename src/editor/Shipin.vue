@@ -41,7 +41,7 @@ export default {
 
         refre(){
             this.refresh = this.refresh + 1
-            console.log(this.refresh)
+           //console.log(this.refresh)
             this.ii =false;
             this.$nextTick(()=>{
                 this.ii = true
@@ -63,9 +63,9 @@ export default {
         },
         selectFile(path,isFile){
            let res = window.electron.ipcRenderer.sendSync('selectFile',path,isFile); 
-           console.log(res)
+          //console.log(res)
             if(res == 'success'){
-                console.log('=====refresh')
+               //console.log('=====refresh')
                 this.refresh = this.refresh +1
               this.refre()
             }

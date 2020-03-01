@@ -33,7 +33,7 @@ export default {
             //list.push(`top:${rh(this.config.y)}`)
            // list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style
         }
     },

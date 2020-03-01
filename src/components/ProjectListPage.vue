@@ -50,9 +50,9 @@ export default {
         pageParam(val){
             let buttons = _.get(this.config,'config.buttons')
             this.buttons = buttons
+            this.curPage  =1 
             if(val && val.pageName == 'showProject'){
-                console.log(val)
-
+               //console.log(val)
                 this.setData(val) 
             }
        } 
@@ -148,7 +148,7 @@ export default {
                  return 
              }
              labels = getFolderContent(null, path.url)
-             
+             this.curPage = 1
             if(labels.error){
                 console.error(labels)
                 return 
@@ -171,7 +171,7 @@ export default {
             }else{
                 this.curLabels = this.labels.slice(0,this.pageSize)
             }
-
+           //console.log("!",this.curPage,this.pages,this.curLabels)
 
         },
         buttonHandler(e){
@@ -224,7 +224,7 @@ export default {
         },
 
         tapHandler(index){ 
-            console.log('=---------------tap',index)
+           //console.log('=---------------tap',index)
             let rindex = (this.curPage-1)*this.pageSize +index 
             this.$emit('routeTo',{path:_.get(this.config,'config.content.to'),param:{pageName:_.get(this.config,'config.content.to'),index:rindex,list:this.labels}})
              

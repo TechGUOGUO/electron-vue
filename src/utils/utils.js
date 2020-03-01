@@ -54,7 +54,7 @@ export function rh(num){
 }
 
 export function randomArray(source,num,type){
-    console.log('===random',source,num)
+   //console.log('===random',source,num)
     if(source.length <= num){
         return [...source]
     }
@@ -65,7 +65,7 @@ export function randomArray(source,num,type){
     while(n>0){
         let r  = Math.floor(Math.random()*temp.length);
         let item = _.slice(temp,r,r+1)[0];
-        console.log(n,item,temp)
+       //console.log(n,item,temp)
         res.push(item)
         n--;
     }
@@ -80,14 +80,14 @@ export function checkContent(app,path){
     }
     try{
         let te= fs.readdirSync(p)
-        console.log(te)
+       //console.log(te)
         let list = []
 
         let sort =_.find(te,f=>f==="order.json")
         if(sort){
           let sortcontent = fs.readFileSync(p+'/order.json').toString()
           let sortList = JSON.parse(sortcontent).list
-          console.log(sortList) 
+         //console.log(sortList) 
             sortList.forEach(sf=>{
                 te.forEach( f=>{
                     let fname = f.split('.')[0]
@@ -120,7 +120,7 @@ export function checkContent(app,path){
         }
         return list
     }catch(e){
-        console.log(e)
+       //console.log(e)
         return []
     }
 }
@@ -133,7 +133,7 @@ export function checkFilePath(app,path,isFile){
     }
     try{
         let st = fs.statSync(p)
-        console.log(st)
+       //console.log(st)
         if(isFile){
             return st.isFile() ? path : ''
         }else{
@@ -193,7 +193,7 @@ export function getFolderContent(app,filePath){
     }else{
          path = app ? join(app.getPath('appData'),app.getName(),filePath): filePath
     }
-    console.log("!!!!",path)
+   //console.log("!!!!",path)
     let result = null
     try{
         let te = fs.readdirSync(path) 
@@ -235,9 +235,9 @@ export function getFolderContent(app,filePath){
           result ={
               list:list
           } 
-          console.log(result)
+         //console.log(result)
         }else{
-
+            te = te.sort((a,b)=> a.split('.')[0]  -b.split('.')[0])
             result = {
                 list:te.map(f=>({name:f,url:path+'/'+f}))
             }

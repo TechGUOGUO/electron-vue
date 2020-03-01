@@ -59,7 +59,7 @@ export default {
         }
     },
     mounted(){ 
-        console.log('mountend')
+       //console.log('mountend')
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
@@ -94,7 +94,7 @@ export default {
              }
         },
         pageParam(val){ 
-            console.log('-----------------------------------------------------pageparam',val)
+           //console.log('-----------------------------------------------------pageparam',val)
             if(val &&val.list){
                 this.curQuestions = val.list
                 this.count = 0
@@ -134,7 +134,7 @@ export default {
             // list.push(`height:${rh(_.get(this.config,'config.img2D.height'))}`)
             list.push('z-index:1')
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         },
 

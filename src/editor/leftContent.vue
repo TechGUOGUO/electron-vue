@@ -18,7 +18,7 @@ export default {
   props:['currentRoute'] ,  
   methods:{
       routeTo(str){
-          console.log('---str')
+         //console.log('---str')
           this.$emit('toContent',str)
       },
       save(){

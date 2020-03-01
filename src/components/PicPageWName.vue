@@ -73,7 +73,7 @@ export default {
           return style
       },
         currentUrl(){
-            console.log(this.pics,this.currentIndex)
+           //console.log(this.pics,this.currentIndex)
             if(this.pics && this.currentIndex >=0 && this.pics.length > this.currentIndex) {
                 return this.pics[this.currentIndex].url || ''
             }
@@ -81,7 +81,7 @@ export default {
         },
         title(){
              if(this.pics && this.currentIndex >=0 && this.pics.length > this.currentIndex) {
-                 console.log("=================ttttttttttttttttttttttttttttttt",this.pics[this.currentIndex])
+                //console.log("=================ttttttttttttttttttttttttttttttt",this.pics[this.currentIndex])
                  let n =  this.pics[this.currentIndex].name
                  if(!n) return '' 
                 

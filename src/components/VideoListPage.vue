@@ -109,7 +109,7 @@ export default {
                let temp= fs.readdirSync(folder)  
                p = temp 
             }catch(e){
-                console.log(e)
+               //console.log(e)
             }
             return p
           }else{
@@ -135,7 +135,7 @@ export default {
        
         selectItem(index){ 
             if(this.currentIndex ===index) return 
-            console.log(index)
+           //console.log(index)
             this.currentIndex = index
             this.url = this.basePath + '/'+this.videos[this.currentIndex]
             document.getElementById("vde").pause()
@@ -143,7 +143,7 @@ export default {
             document.getElementById("vde").play()
         },
         buttonHandler(e){
-            console.log(e.type)
+           //console.log(e.type)
            
              if(e.type=="routeTo"){
                 this.$emit('routeTo',e.options.path)
@@ -154,7 +154,7 @@ export default {
                     this.$emit('routeTo',this.from)
                 }
             if(e.options.action=="left"){ 
-                console.log('left')
+               //console.log('left')
                 if(this.leftP == 0){
                     return 
                 }else{

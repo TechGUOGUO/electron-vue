@@ -27,14 +27,22 @@ export default {
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
-
+       setTimeout(()=>{
+                    const webview = document.querySelector('webview')
+                    webview.send('top')
+                    webview.send('resize')
+                },100)
     },
     watch:{
 
         url(val,old){
             if(val!== old){
-                  const webview = document.querySelector('webview')
+                setTimeout(()=>{
+
+                    const webview = document.querySelector('webview')
                     webview.send('top')
+                    webview.send('resize')
+                },100)
             }
         }
     },
@@ -43,7 +51,7 @@ export default {
           return this.visible ? '' : 'display:none'
       },
       url(){ 
-          console.log(this.pageParam)
+         //console.log(this.pageParam)
           if(typeof this.pageParam === 'string' && this.pageParam){
               return this.pageParam.indexOf(':')>=0 ? this.pageParam : resolveAssets(app,this.pageParam)
           }else{

@@ -27,14 +27,14 @@ export default {
         }
     },
     mounted(){
-        console.log(this.config)
+       //console.log(this.config)
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
         this.qr = _.get(this.config,'config.qr')
         if(this.qr){
                 QRCode.toDataURL(this.qr.url, (err, url) =>{
-                                console.log(url)
+                               //console.log(url)
                    this.qrcodeimg = url 
                 })
         }
@@ -47,9 +47,9 @@ export default {
         }
         if(this.from &&this.from!='pdf' && this.from!='turnbook' && this.from !='mode'){
                 this.ff = this.from
-                console.log('====set ddd',this.ff)
+               //console.log('====set ddd',this.ff)
             }
-        console.log(this.param)
+       //console.log(this.param)
         
     },
     watch:{
@@ -60,12 +60,12 @@ export default {
             if(typeof val == 'object' && val!==null && JSON.stringify(val)!='{}'  ){
                  this.param = val; 
             }
-            console.log('-----watch',this.param)
+           //console.log('-----watch',this.param)
         },
         from(val){
-            console.log(val)
+           //console.log(val)
             if(val && val!='pdf' && val!='turnbook' && val!='mode'){
-                console.log('=====setff',val)
+               //console.log('=====setff',val)
                 this.ff = val
             }
         }
@@ -85,7 +85,7 @@ export default {
             list.push(`height:${rh(_.get(this.config,'config.qr.height'))}`)
             list.push('z-index:1')
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
       }
     },
@@ -99,7 +99,7 @@ export default {
                     window.electron.remote.app.quit()
                     return 
                 }
-                console.log('===============',this.ff)
+               //console.log('===============',this.ff)
                 this.$emit('routeTo',e.options.action === 'back' ?this.ff : '')
             }
         },

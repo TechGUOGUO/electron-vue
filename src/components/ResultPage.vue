@@ -36,7 +36,7 @@ export default {
         }
     },
     mounted(){
-        console.log(this.config)
+       //console.log(this.config)
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
@@ -52,7 +52,7 @@ export default {
     watch:{
        param(val){
            this.result = val; 
-           console.log(this.result)
+          //console.log(this.result)
        }
     },
 

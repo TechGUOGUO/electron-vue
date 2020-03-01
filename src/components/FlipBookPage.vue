@@ -33,7 +33,7 @@ export default {
           return this.visible ? '' : 'display:none'
       },
       url(){ 
-          console.log(this.pageParam)
+         //console.log(this.pageParam)
           if(typeof this.pageParam === 'string' && this.pageParam){
               return this.pageParam.indexOf(':')>=0 ? this.pageParam : resolveAssets(app,this.pageParam)
           }else{

@@ -13,7 +13,7 @@ export default new Vuex.Store({
       state.counter--;
     },
     setItem(state,item){
-      console.log("mutation...",item)
+     //console.log("mutation...",item)
       state.item = item
     }
   },
@@ -30,7 +30,7 @@ export default new Vuex.Store({
       }, 1000);
     },
     setItem({ commit },item){
-      console.log("setItem..........",item)
+     //console.log("setItem..........",item)
 
       commit('setItem',item);
       

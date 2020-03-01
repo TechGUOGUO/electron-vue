@@ -37,14 +37,14 @@ export default {
         }
     },
     mounted(){
-        console.log(this.config)
+       //console.log(this.config)
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
 
         let labels = getFile(app, _.get(this.config,'config.content.items'))
         this.labels = labels.list
-        console.log('====labels',labels)
+       //console.log('====labels',labels)
         this.count = labels.list.length
         
         let row = _.get(this.config,'config.content.row')
@@ -80,7 +80,7 @@ export default {
             list.push(`top:${rh(_.get(this.config,'config.content.y'))}`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         },
  
@@ -97,7 +97,7 @@ export default {
             list.push(`height:${rh(_.get(this.config,'config.content.item.h'))}`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         }
 

@@ -30,20 +30,20 @@ export default {
         }
     },
     mounted(){
-        console.log("======",this.config)
+       //console.log("======",this.config)
         this.bg = resolveAssets(app,_.get(this.config,'config.bg'))
         let buttons = _.get(this.config,'config.buttons')
         this.buttons = buttons
 
-        console.log(this.pageParam)
+       //console.log(this.pageParam)
         if(typeof this.pageParam === 'string'){
             this.url = resolveAssets(app,this.pageParam)
         }else{
 
             this.url = this.pageParam ? this.pageParam.list[this.pageParam.index].url : _.get(this.config,'config.video.url')
         }
-        console.log(this.url)
-        console.log(this.playUrl)
+       //console.log(this.url)
+       //console.log(this.playUrl)
         setTimeout(()=>{
             this.full()
         },200)
@@ -54,17 +54,17 @@ export default {
     },
     watch:{
         pageParam(val){
-            console.log("vvvvvvvvv",val)
+           //console.log("vvvvvvvvv",val)
             if(!val) return 
             if(typeof val ==='string'){ 
                 this.url =  resolveAssets(app,val)
                 
-                 console.log("================valddddd",this.url)
+                //console.log("================valddddd",this.url)
             }else{
                 if(!val || val.pageName !=='playVideo')
                   return 
                 this.url = val&& val.list ? val.list[val.index].url : _.get(this.config,'config.video.url') 
-                console.log("================valddddd",this.url) 
+               //console.log("================valddddd",this.url) 
             }
         }
     },
@@ -90,7 +90,7 @@ export default {
           //  list.push(`text-align:center`)
             list.push(`z-index:${this.zIndex||1}`)
             let style = list.join(';')
-            console.log(style)
+           //console.log(style)
             return style    
         },
       videoContainer(){

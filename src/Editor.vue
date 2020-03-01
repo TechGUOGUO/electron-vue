@@ -67,7 +67,7 @@ export default {
             this.isXmList =true
         },
         editlist(v){
-            console.log(v)
+           //console.log(v)
             this.isXm =false;
             this.isXmList = true;
             this.xmlistParent = v;
@@ -83,7 +83,7 @@ export default {
         },
         toContent(r){
             this.currentRoute = r;
-            console.log(r) 
+           //console.log(r) 
 
         }
     }

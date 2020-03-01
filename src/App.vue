@@ -215,15 +215,15 @@ export default {
         this.currentPage = options.path;
         this.currentPageParams = options.param
 
-        console.log(this.currentPage,this.currentPageParams)
+       //console.log(this.currentPage,this.currentPageParams)
       }
-      console.log("routeTo",options)
+     //console.log("routeTo",options)
     }
   },
   mounted(){  
-    console.log(config)
+   //console.log(config)
     this.pages = config.pages;
-    console.log(this.pages)
+   //console.log(this.pages)
     setRem(config.screenWidth,config.screenHeight)
     this.currentPage = config.entry;
   },

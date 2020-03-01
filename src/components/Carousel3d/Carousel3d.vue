@@ -158,7 +158,7 @@
                 const sw = parseInt(this.width, 10) + (parseInt(this.border, 10) * 2)
                 const sh = parseInt(parseInt(this.height) + (this.border * 2), 10)
                 const ar = this.calculateAspectRatio(sw, sh)
-                console.log('======================',this.width,ar)
+               //console.log('======================',this.width,ar)
                 return this.slideWidth / ar
             },
             visible () {
