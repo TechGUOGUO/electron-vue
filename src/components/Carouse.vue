@@ -1,6 +1,6 @@
 <template>
     <div class="bundlePage" :style="visibleStyle" @click="fullClick"> 
-       <Carousel autoplay loop :autoplay-speed='5000' trigger='click'>
+       <Carousel autoplay loop arrow='always' :autoplay-speed='5000' trigger='click'>
            <CarouselItem v-for = '(pic,index) in pics' :key='index'>
                 <div @click="toUrl(pic.url)">
                     <img :src="pic.pic|realpath" :style="st" draggable="false">
