@@ -24,7 +24,7 @@ if(isDevelopment){
 }
 // app.setName('清镇法条');
 // app.setName('gaokao')
-app.setName('lunbo')
+app.setName('能源服务')
 app.setPath('appData',staticFolder)
 
 

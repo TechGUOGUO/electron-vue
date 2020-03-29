@@ -1,180 +1,28 @@
 <template>
   <div id="app">
     <template v-for=" page  in pages">
-      <SimplePage 
-        v-if="page.type=='pic_button'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name">
-      </SimplePage>
-       <CarousePage 
-        v-if="page.type=='carouse'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name">
-      </CarousePage>
-       <ModePage 
-        v-if="page.type=='pic_button_3'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :pageParam = "currentPage === page.name ? currentPageParams : null "
-        :key= "page.name">
-      </ModePage>
-      <PDFPage 
-        :from="from"
-        v-if="page.type=='pdf' && currentPage===page.name" 
-        :visible = "currentPage===page.name" 
-        :key= "page.name" 
-        :config= "page" 
-        :pageParam= "currentPage===page.name ? currentPageParams : null "
-        @routeTo= "routeTo">
-      </PDFPage>
-       <FlipBookPage 
-        :from="from"
-        v-if="page.type=='book'&&currentPage===page.name" 
-        :visible = "true" 
-        :key= "page.name" 
-        :config= "page" 
-        :pageParam= "currentPage===page.name ? currentPageParams : null "
-        @routeTo= "routeTo">
-      </FlipBookPage>
-       <TurnBookPage 
-        :from="from"
-        v-if="page.type=='turnbook'&&currentPage===page.name" 
-        :visible = "true" 
-        :key= "page.name" 
-        :config= "page" 
-        :pageParam= "currentPage===page.name ? currentPageParams : null "
-        @routeTo= "routeTo">
-      </TurnBookPage>
-      <VideoPage 
-       v-if="page.type=='video' && currentPage === page.name" 
-       :from="from"
-        :visible = "true" 
-        :key= "page.name" 
-        :config= "page" 
-        :pageParam= "currentPage == page.name ? currentPageParams : null"
-        @routeTo= "routeTo">
-      </VideoPage>
-       <VideoListPage
-        v-if="page.type=='video_list'" 
-        :from="from"
-        :visible = "currentPage===page.name" 
-        :key= "page.name" 
-        :config= "page" 
-        :pageParam= "currentPageParams"
-        @routeTo= "routeTo">  
-      </VideoListPage>
-      <Pic3DPage
-       v-if="page.type=='pic_3d'" 
-        :from="from"
-        :visible = "currentPage===page.name" 
-        :key= "page.name" 
-        :config= "page" 
-        :pageParam= "currentPageParams"
-        @routeTo= "routeTo">  
-      </Pic3DPage>
-       <PicPage
-        v-if="page.type=='pic'" 
-        :from="from"
-        :visible = "currentPage===page.name" 
-        :key= "page.name" 
-        :config= "page" 
-        :pageParam= "currentPageParams"
-        @routeTo= "routeTo">  
-      </PicPage>
-       <PicPageWName
-        v-if="page.type=='picn'" 
-        :from="from"
-        :visible = "currentPage===page.name" 
-        :key= "page.name" 
-        :config= "page" 
-        :pageParam= "currentPageParams"
-        @routeTo= "routeTo">  
-      </PicPageWName>
-      <BtnListPage 
-        v-if="page.type=='pic_buttons'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name">
-      </BtnListPage> 
-      <ItemPagerListPage 
-        v-if="page.type=='pager_buttons'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name">
-      </ItemPagerListPage> 
-       <ItemPagerListPage2 
-        v-if="page.type=='pager_buttons2'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name">
-      </ItemPagerListPage2> 
-      <ProjectListPage 
-        v-if="page.type=='project-item-list'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :pageParam= "currentPageParams"
-        :key= "page.name">
-      </ProjectListPage> 
-      <ProjectPage 
-         v-if="page.type=='project'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-          :pageParam= "currentPageParams"
-        :key= "page.name">
-      </ProjectPage> 
-      <AudioPage 
-        v-if="page.type=='play'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name"
-        :pageParam="currentPageParams">
-      </AudioPage> 
-       <ExamPage 
-        v-if="page.type=='exam'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name"
-        :pageParam="currentPageParams">
-      </ExamPage> 
-      <ResultPage 
-        v-if="page.type=='result'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name"
-        :param="currentPageParams">
-      </ResultPage> 
-      <DownloadPage 
-        v-if="page.type=='download'" 
-        :from="from"
-        :visible = "currentPage==page.name" 
-        :config = "page"  
-        @routeTo= "routeTo" 
-        :key= "page.name">
-      </DownloadPage> 
+      <SimplePage v-if="page.type=='pic_button'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name"> </SimplePage> 
+      <CarousePage v-if="page.type=='carouse'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name"> </CarousePage>
+      <ModePage v-if="page.type=='pic_button_3'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :pageParam = "currentPage === page.name ? currentPageParams : null " :key= "page.name"> </ModePage>
+      <PDFPage :from="from" v-if="page.type=='pdf' && currentPage===page.name" :visible = "currentPage===page.name" :key= "page.name" :config= "page" :pageParam= "currentPage===page.name ? currentPageParams : null " @routeTo= "routeTo"> </PDFPage>
+      <FlipBookPage :from="from" v-if="page.type=='book'&&currentPage===page.name" :visible = "true" :key= "page.name" :config= "page" :pageParam= "currentPage===page.name ? currentPageParams : null " @routeTo= "routeTo"> </FlipBookPage>
+      <TurnBookPage :from="from" v-if="page.type=='turnbook'&&currentPage===page.name" :visible = "true" :key= "page.name" :config= "page" :pageParam= "currentPage===page.name ? currentPageParams : null " @routeTo= "routeTo"> </TurnBookPage>
+      <VideoPage v-if="page.type=='video' && currentPage === page.name" :from="from" :visible = "true" :key= "page.name" :config= "page" :pageParam= "currentPage == page.name ? currentPageParams : null" @routeTo= "routeTo"> </VideoPage>
+      <SingleVideoPage v-if="page.type=='svideo' && currentPage === page.name" :from="from" :visible = "true" :key= "page.name" :config= "page" :pageParam= "currentPage == page.name ? currentPageParams : null" @routeTo= "routeTo"> </SingleVideoPage>
+     
+      <VideoListPage v-if="page.type=='video_list'" :from="from" :visible = "currentPage===page.name" :key= "page.name" :config= "page" :pageParam= "currentPageParams" @routeTo= "routeTo">  </VideoListPage>
+      <Pic3DPage v-if="page.type=='pic_3d'" :from="from" :visible = "currentPage===page.name" :key= "page.name" :config= "page" :pageParam= "currentPageParams" @routeTo= "routeTo">  </Pic3DPage>
+      <PicPage v-if="page.type=='pic'" :from="from" :visible = "currentPage===page.name" :key= "page.name" :config= "page" :pageParam= "currentPageParams" @routeTo= "routeTo">  </PicPage>
+      <PicPageWName v-if="page.type=='picn'" :from="from" :visible = "currentPage===page.name" :key= "page.name" :config= "page" :pageParam= "currentPageParams" @routeTo= "routeTo">  </PicPageWName>
+      <BtnListPage v-if="page.type=='pic_buttons'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name"> </BtnListPage> 
+      <ItemPagerListPage v-if="page.type=='pager_buttons'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name"> </ItemPagerListPage> 
+      <ItemPagerListPage2 v-if="page.type=='pager_buttons2'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name"> </ItemPagerListPage2> 
+      <ProjectListPage v-if="page.type=='project-item-list'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :pageParam= "currentPageParams" :key= "page.name"> </ProjectListPage> 
+      <ProjectPage v-if="page.type=='project'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :pageParam= "currentPageParams" :key= "page.name"> </ProjectPage> 
+      <AudioPage v-if="page.type=='play'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name" :pageParam="currentPageParams"> </AudioPage> 
+      <ExamPage v-if="page.type=='exam'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name" :pageParam="currentPageParams"> </ExamPage> 
+      <ResultPage v-if="page.type=='result'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name" :param="currentPageParams"> </ResultPage> 
+      <DownloadPage v-if="page.type=='download'" :from="from" :visible = "currentPage==page.name" :config = "page"  @routeTo= "routeTo" :key= "page.name"> </DownloadPage> 
     </template>
   </div>
 </template>
@@ -184,6 +32,7 @@ import SimplePage  from './components/SimplePage'
 import PDFPage from './components/PDFPage'
 import {getConfig,setRem} from './utils/utils'
 import VideoPage  from './components/VideoPage'
+import SingleVideoPage from './components/SingleVideoPage'
 import VideoListPage from './components/VideoListPage'
 import Pic3DPage  from './components/Pic3DPage'
 import PicPage from './components/PicPage'
@@ -259,7 +108,8 @@ export default {
     ModePage,
     FlipBookPage,
     TurnBookPage,
-    CarousePage
+    CarousePage,
+    SingleVideoPage
   }
 
 }
