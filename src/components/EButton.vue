@@ -146,6 +146,7 @@ export default {
     },
     methods:{
         upHandler(){
+            console.log(this.config.toParams)
             if(this.isPressDown ==true){
                 this.$emit('buttonAction',{
                     type: this.config.to ? 'routeTo' : 'actionTo',

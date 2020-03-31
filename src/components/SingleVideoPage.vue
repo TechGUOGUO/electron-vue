@@ -1,8 +1,8 @@
 <template>
-    <div id="abcd" class="bundlePage" :style="visibleStyle" @click="fullClick">
+    <div id="abcd" class="bundlePage" :style="visibleStyle" >
          <div :style="titleStyle">{{playName}}</div>
         <div class='ab' :style="videoContainer">
-          <video draggable="false" v-if="url"  style="position:relative" controls autoplay loop  :width='videoWidth' :height="videoHeight" id="myVideo1"  >
+          <video draggable="false" ref='video' v-if="url"  style="position:relative" controls autoplay :width='videoWidth' :height="videoHeight" id="myVideo1"  >
 			<source :src="playUrl" type="video/mp4"/>
          </video>
         </div>
@@ -40,14 +40,28 @@ export default {
        console.log(this.pageParam) 
 
         this.url =resolveAssets(app,'content/video/'+ this.list[this.pageParam.key] ) 
-      
      
+       
     },
     watch:{
         pageParam(val){
            //console.log("vvvvvvvvv",val)
               this.url =resolveAssets(app,'content/video/'+ this.list[val.key] ) 
       
+        },
+        url(val,old){
+            if(val && !old){
+                const that = this
+                this.$nextTick(()=>{
+                    console.log(this.$refs.video)
+                    this.$refs.video.onended  = function(){
+                        setTimeout(()=>{
+
+                            that.$emit('routeTo',that.from)
+                        },2000)
+                }
+                })
+            }
         }
     },
     computed:{
