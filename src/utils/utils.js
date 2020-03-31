@@ -1,6 +1,7 @@
 import {join} from 'path'
 import fs from 'fs' 
 import * as _ from 'lodash'
+var parseString = require('xml2js').parseString;
 let screenWidth=800;
 let screenHeight=600;
 export function getConfig(app){
@@ -143,7 +144,26 @@ export function checkFilePath(app,path,isFile){
         return ''
     }
 }
-export function getFile(app,filePath){
+export async function getXMLFile(app,filePath){
+    if(!filePath) { 
+        return  {
+            'error':'parse error',
+            'message': "path is undefined"
+        }
+    }
+    const path = app ? join(app.getPath('appData'),app.getName(),filePath) : filePath
+    const config = fs.readFileSync(path).toString()
+   return new Promise((resolve ,reject) =>{
+       parseString(config,(error ,res) =>{
+           if(error) {
+               reject({'error': 'parse error','message':'parse error'})
+           }
+           resolve(res)
+       })
+   })
+      
+}
+export function getFile(app,filePath,ext){
     if(!filePath) { 
         return  {
             'error':'parse error',
@@ -155,7 +175,11 @@ export function getFile(app,filePath){
     let result = null
     try{
         const config = fs.readFileSync(path).toString()
-        result =JSON.parse(config)
+        if(ext === 'xml'){
+            result =parseString(config,)
+        }else{
+            result =JSON.parse(config)
+        }
     }catch(e){
         result = {
             'error':'parse error',

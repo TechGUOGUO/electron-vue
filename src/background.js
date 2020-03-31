@@ -24,7 +24,7 @@ if(isDevelopment){
 }
 // app.setName('清镇法条');
 // app.setName('gaokao')
-app.setName('能源服务')
+app.setName('植恩')
 app.setPath('appData',staticFolder)
 
 
@@ -42,7 +42,7 @@ app.setPath('appData',staticFolder)
 // //trustManager.add(resolve(staticFolder,'瀚华软件'))
 function createWindow () {
   // Create the browser window.
-  win = new BrowserWindow({ width: 1920, height: 1080, frame:false,fullscreen: isDevelopment ? false :true , webPreferences: {
+  win = new BrowserWindow({ width: 1080, height: 1920, frame:false,fullscreen: isDevelopment ? false :true , webPreferences: {
     nodeIntegration: true,
     webSecurity:false,
 
