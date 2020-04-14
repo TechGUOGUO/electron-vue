@@ -1,9 +1,9 @@
 <template>
-    <div class="bundlePage" :style="visibleStyle" @click="fullClick"> 
-       <Carousel autoplay loop arrow='always' :autoplay-speed='speed' trigger='click' 
+    <div class="bundlePage" :style="visibleStyle" > 
+       <Carousel autoplay loop arrow='always' :autoplay-speed='speed' trigger='click'  @on-click='fullClick'
        :style='ss'>
-           <CarouselItem v-for = '(pic,index) in pics' :key='index'>
-                <div @click="toUrl(pic.url)">
+           <CarouselItem v-for = '(pic,index) in pics' :key='index' >
+                <div  >
                     <img :src="pic.pic|realpath" :style="st" draggable="false">
                 </div>
            </CarouselItem>
@@ -12,7 +12,7 @@
             <EButton v-if='show'  :config = 'button' :key="index" @buttonAction="buttonHandler" :z-index="10001"/> 
         </template>
         <!-- <webview id="foo" v-if='show' :src="curl" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index=1000"></webview> -->
-        <img :src='curl'  v-if='show' @click='show=false' style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1000">
+        <img :src='curl'  v-if='show' @click.stop='show=false' style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1000">
         <img draggable="false" class="bg" :src="bg">
     </div>
 </template>
@@ -95,6 +95,7 @@ export default {
     },
     methods:{
         toUrl(url){
+            console.log('-----')
             console.log(url)
             this.curl = resolveAssets(app,'content/'+url);
             this.show = true
@@ -111,11 +112,10 @@ export default {
                  
             }
         },
-        fullClick(){
-            let c = _.get(this.config,'config.bgclick')
-            if(c && c.to){
-                this.$emit('routeTo',c.to)
-            }
+        fullClick(index){ 
+            const url = this.pics[index].url
+            this.curl = resolveAssets(app,'content/'+url);
+            this.show = true
         },
       
 
