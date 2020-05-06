@@ -1,71 +1,138 @@
 'use strict'
 
-import { app, dialog, BrowserWindow ,globalShortcut, ipcMain } from 'electron'
+import { app,Menu,shell, dialog, BrowserWindow ,globalShortcut, ipcMain } from 'electron'
 import {
   createProtocol,
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib'
 import {resolve,join,basename,dirname} from 'path'
-import fs, { unlink } from 'fs'
+import fs, { unlink, exists, existsSync } from 'fs'
 import { resolveAssets } from './utils/utils'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 let staticFolder="";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win
+// let win
 
 
+let isAuto = false
 //static folder
+const template = [
+  {
+    label: '设置',
+    submenu: [
+      {label:'退出程序',
+    click:() => {
+      quit()
+    }},
+       { label:  '自动',
+        click: () => {
+          isAuto  =true
+          autoPlay()
 
+        }
+
+      },
+      {
+        label:'取消自动',
+        click:() => {
+          isAuto =false;
+        }
+      }
+    ]
+  },
+]
+function quit(){
+ app.quit()
+}
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
 if(isDevelopment){
   staticFolder =  join(app.getAppPath(),'../assets_config')
 }else{
   staticFolder = join(app.getAppPath(),'../../assets_config')
-}
-// app.setName('清镇法条');
-// app.setName('gaokao')
-app.setName('植恩')
+} 
 app.setPath('appData',staticFolder)
-
-
-// let ppfp ="" 
-// ppfp= process.arch=='x64'? require('path').join(staticFolder,'plugins/dll','/pepflashplayer64_30_0_0_113.dll'):require('path').join(staticFolder,'plugins/dll','/pepflashplayer32_30_0_0_113.dll')
  
-  
-// //console.log(app.getPath('pepperFlashSystemPlugin'))
-////console.log(ppfp)
-// app.commandLine.appendSwitch('ppapi-flash-path',ppfp); 
-// app.commandLine.appendSwitch('ppapi-flash-version', '30.0.0.113');
-
-// // Scheme must be registered before the app is ready
-// protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
-// //trustManager.add(resolve(staticFolder,'瀚华软件'))
+const windows  = [];
+let mainWin 
+let config ;
+let currentIndex = -1
+const baseweb = 'http://www.hongyiyingxiao.com/bst'
+function autoPlay() {
+  setTimeout(() => {
+    if(isAuto){
+      next()
+      autoPlay()
+    }
+  },parseInt(config.play.time))
+}
 function createWindow () {
-  // Create the browser window.
-  win = new BrowserWindow({ width: 1080, height: 1920, frame:false,fullscreen: isDevelopment ? false :true , webPreferences: {
+  let cstr = fs.readFileSync(staticFolder+'/config.json').toString()
+    config = JSON.parse(cstr.replace(/\s/g,''))
+  console.log(cstr)
+  app.setName(config.title.name)
+  console.log(config.title.name)
+  mainWin = new BrowserWindow({ width: 1920, height: 1080, 
+    // frame:false,
+    title: config.title.name,
+    fullscreen:   false  ,
+    webPreferences: {
     nodeIntegration: true,
-    webSecurity:false,
-
+    webSecurity:false, 
     // plugins:true,
     webviewTag:true
   } })
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) { 
-    // Load the url of the dev server if in development mode
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    
-   if (!process.env.IS_TEST) win.webContents.openDevTools()
-  } else {
-    createProtocol('app')
-    // Load the index.html when not in development
-    win.loadURL('app://./index.html')
-    // win.loadURL('app://E:\\projects\\guoyingxu\\electron-vue\\assets_config\\plugins\\pdf-book\\index.html')
-
-  }
-
-  win.on('closed', () => {
-    win = null
+  mainWin.loadURL(baseweb)
+  mainWin.on('show',()=>{
+    console.log(mainWin)
   })
+
+
+  mainWin.on('closed', () => {
+    mainWin = null
+  })
+  let list = config.menu 
+  
+  list.forEach(item => {
+    if(item.data && item.data.length>0){
+      item.data.forEach(dataitem  => {
+        windows.push(dataitem)
+      }) 
+    }else{
+      windows.push({
+        "id": item.id,
+        "name": item.name,
+        "type": item.type,
+        "showAuto":item.showAuto, 
+        "applicationName" : item.applicationName,
+        "url": item.url
+      })
+    }
+  })
+  for(let i = 0; i< windows.length;i ++ ){
+    // Create the browser window.
+    windows[i].win = new BrowserWindow({ width: 1920, height: 1080, 
+      // frame:false,
+      show:false,
+      title: windows[i].name,
+      fullscreen:   false  ,
+      webPreferences: {
+      nodeIntegration: true,
+      webSecurity:false, 
+      // plugins:true,
+      webviewTag:true
+    } })
+ 
+    windows[i].win.loadURL(windows[i].url)
+    
+
+    windows[i].win.on('closed', () => {
+      windows[i].win = null
+    })
+  }
+  
 }
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -83,6 +150,53 @@ app.on('activate', () => {
     createWindow()
   }
 }) 
+function pre(){
+  if(currentIndex < 0 ) {
+    currentIndex = 0 
+  }else{
+    if(windows[currentIndex].type == 'url'){
+      windows[currentIndex].win.hide()
+    }
+    currentIndex = currentIndex == 0 ?  windows.length -1 : currentIndex -1
+  }
+  if(windows[currentIndex].type == 'url'){
+    windows[currentIndex].win.show()
+  }else{
+    if(windows[currentIndex].type=='application'){
+      const exec = require('child_process').execFile 
+      exec(resolve(windows[currentIndex].url).replace(/_/g,' '),(a,b,c) =>{
+        console.log(a,b,c)
+      } )
+  // 不受child_process默认的缓冲区大小的使用方法，没参数也要写上{}：workerProcess = exec(cmdStr, {})
+ 
+    }
+  }
+
+}
+function next(){
+  if(currentIndex < 0 ) {
+    currentIndex = 0 
+  }else{
+    if(windows[currentIndex].type == 'url'){
+      windows[currentIndex].win.hide()
+    }
+    currentIndex = currentIndex == windows.length -1 ?  0 : currentIndex +1
+  }
+  if(windows[currentIndex].type == 'url'){
+    windows[currentIndex].win.show()
+  }else{
+    if(windows[currentIndex].type=='application'){
+      const exec = require('child_process').execFile 
+      console.log(windows[currentIndex].url)
+      exec(resolve(windows[currentIndex].url).replace(/_/g,' '),(a,b,c) =>{
+        console.log(a,b,c)
+      } )
+  // 不受child_process默认的缓冲区大小的使用方法，没参数也要写上{}：workerProcess = exec(cmdStr, {})
+ 
+    } 
+  }
+
+}
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -104,11 +218,23 @@ app.on('ready', async () => {
   
   createWindow()
 
-  globalShortcut.register('CommandOrControl+E', () => {
-    win.webContents.send('editor')
+  // globalShortcut.register('CommandOrControl+E', () => {
+  //   win.webContents.send('editor')
+  // })
+  config.hotKey.previousPage.forEach(key => { 
+      globalShortcut.register(key, () => {
+        pre()
+      })
   })
+  config.hotKey.nextPage.forEach(key => { 
+    globalShortcut.register(key, () => {
+      next()
+    })
+})
+ 
 
 
+  
   ipcMain.on('delFile',(event,arg1,arg2)=>{ 
     let d =dialog.showMessageBoxSync({
       title:'删除',
