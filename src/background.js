@@ -138,17 +138,19 @@ ipcMain.on('hideWindow',(event,id) =>{
   let list = config.menu 
   
   list.forEach(item => {
-    if(item.showAuto == 'true') { 
+    // if(item.showAuto == 'true') { 
       if(item.data && item.data.length>0  ){
         item.data.forEach(dataitem  => {
+          windows.push(dataitem)
           if(dataitem.showAuto == 'true') {
-            windows.push(dataitem)
             runner.push({id:dataitem.id,isWindow:false})
             runner.push({id:dataitem.id,isWindow:true})
           }
         }) 
       }else{
-        runner.push({id:item.id,isWindow:false})
+        if(item.showAuto == 'true'){
+          runner.push({id:item.id,isWindow:false})
+        }
         windows.push({
           "id": item.id,
           "name": item.name,
@@ -159,7 +161,7 @@ ipcMain.on('hideWindow',(event,id) =>{
           "bat":item.bat
         })
       }
-    }
+    // }
   })
   for(let i = 0; i< windows.length;i ++ ){
     // Create the browser window.
