@@ -8,12 +8,10 @@ import {
 import {resolve,join,basename,dirname} from 'path'
 import fs, { unlink, exists, existsSync } from 'fs'
 import { resolveAssets } from './utils/utils'
+import * as _ from 'lodash'
+import request from 'request'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 let staticFolder="";
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-// let win
-
 
 let isAuto = false
 //static folder
@@ -46,69 +44,121 @@ function quit(){
  app.quit()
 }
 const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
+Menu.setApplicationMenu(null)
 if(isDevelopment){
   staticFolder =  join(app.getAppPath(),'../assets_config')
 }else{
   staticFolder = join(app.getAppPath(),'../../assets_config')
 } 
 app.setPath('appData',staticFolder)
- 
+
 const windows  = [];
 let mainWin 
+let configUrlStr = fs.readFileSync(staticFolder+'/configurl.json').toString()
+const configUrljosn = JSON.parse(configUrlStr.replace(/\s/g,''))
+let configUrl =  configUrljosn.path
+
 let config ;
-let currentIndex = -1
-const baseweb = 'http://www.hongyiyingxiao.com/bst'
+let currentIndex = -1 
+console.log(configUrl)
+function getConfig(cb){
+  request({
+    url:configUrl
+  },(err,res,body) => {
+    console.log(body)
+    config = JSON.parse(body)
+    cb()
+  })
+}
+
+let timer = null;
+
+const runner = []
+let currentWindow;
+// const baseweb = 'http://www.hongyiyingxiao.com/bst'
+// const baseweb = 'http://localhost:3000/index'
 function autoPlay() {
   setTimeout(() => {
     if(isAuto){
+      currentWindow && hideWindow(currentWindow.id)
       next()
       autoPlay()
     }
   },parseInt(config.play.time))
 }
+const path = require('path')
+const renderProcessApi = path.join(__dirname, './inject.js')
 function createWindow () {
-  let cstr = fs.readFileSync(staticFolder+'/config.json').toString()
-    config = JSON.parse(cstr.replace(/\s/g,''))
-  console.log(cstr)
-  app.setName(config.title.name)
-  console.log(config.title.name)
+  // let cstr = fs.readFileSync(staticFolder+'/config.json').toString()
+  // config = JSON.parse(cstr.replace(/\s/g,'')) 
+  app.setName(config.title.name) 
   mainWin = new BrowserWindow({ width: 1920, height: 1080, 
     // frame:false,
     title: config.title.name,
-    fullscreen:   false  ,
+    fullscreen:   true  ,
     webPreferences: {
-    nodeIntegration: true,
-    webSecurity:false, 
-    // plugins:true,
-    webviewTag:true
+     nodeIntegration: true,
+      webSecurity:false, 
+      // plugins:true,
+      webviewTag:true,
+      preload:renderProcessApi
   } })
 
-  mainWin.loadURL(baseweb)
-  mainWin.on('show',()=>{
-    console.log(mainWin)
-  })
-
+  mainWin.loadURL(config.baseUrl) 
+  resetTimer()
 
   mainWin.on('closed', () => {
     mainWin = null
+    app.quit()
   })
+
+ipcMain.on('mousemove',(event) => { 
+  console.log('----stop')
+  if(isAuto){ 
+    currentWindow && hideWindow(currentWindow.id)
+  }
+  isAuto =false
+  resetTimer()
+})
+function resetTimer() { 
+  if(timer) {
+    clearTimeout(timer) 
+  } 
+  timer = setTimeout(()=>{ 
+    isAuto =true
+    autoPlay()
+  },parseInt(config.play.waitTime || 10000))
+}
+ipcMain.on('start',   (event, someArgument) => {
+ showWindow(someArgument) 
+})
+ipcMain.on('hideWindow',(event,id) =>{
+  hideWindow(id)
+})
   let list = config.menu 
   
   list.forEach(item => {
-    if(item.data && item.data.length>0){
-      item.data.forEach(dataitem  => {
-        windows.push(dataitem)
-      }) 
-    }else{
-      windows.push({
-        "id": item.id,
-        "name": item.name,
-        "type": item.type,
-        "showAuto":item.showAuto, 
-        "applicationName" : item.applicationName,
-        "url": item.url
-      })
+    if(item.showAuto == 'true') { 
+      if(item.data && item.data.length>0  ){
+        item.data.forEach(dataitem  => {
+          if(dataitem.showAuto == 'true') {
+            windows.push(dataitem)
+            runner.push({id:dataitem.id,isWindow:false})
+            runner.push({id:dataitem.id,isWindow:true})
+          }
+        }) 
+      }else{
+        runner.push({id:item.id,isWindow:false})
+        windows.push({
+          "id": item.id,
+          "name": item.name,
+          "type": item.type,
+          "showAuto":item.showAuto, 
+          "applicationName" : item.applicationName,
+          "url": item.url,
+          "bat":item.bat
+        })
+      }
     }
   })
   for(let i = 0; i< windows.length;i ++ ){
@@ -117,17 +167,16 @@ function createWindow () {
       // frame:false,
       show:false,
       title: windows[i].name,
-      fullscreen:   false  ,
+      fullscreen:   true  ,
       webPreferences: {
       nodeIntegration: true,
       webSecurity:false, 
-      // plugins:true,
+      // plugins:true, 
+      preload:renderProcessApi,
       webviewTag:true
     } })
- 
     windows[i].win.loadURL(windows[i].url)
     
-
     windows[i].win.on('closed', () => {
       windows[i].win = null
     })
@@ -146,7 +195,7 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (win === null) {
+  if (mainWin === null) {
     createWindow()
   }
 }) 
@@ -154,323 +203,187 @@ function pre(){
   if(currentIndex < 0 ) {
     currentIndex = 0 
   }else{
-    if(windows[currentIndex].type == 'url'){
-      windows[currentIndex].win.hide()
-    }
-    currentIndex = currentIndex == 0 ?  windows.length -1 : currentIndex -1
+    if(runner[currentIndex].isWindow)
+    currentWindow && hideWindow(currentWindow.id)
+    currentIndex= currentIndex == 0 ?  runner.length -1  : currentIndex -1
+  } 
+  if(runner[currentIndex].isWindow){
+    showWindow(runner[currentIndex].id)
+  }else {
+    sendMessage(runner[currentIndex].id) 
   }
-  if(windows[currentIndex].type == 'url'){
-    windows[currentIndex].win.show()
-  }else{
-    if(windows[currentIndex].type=='application'){
-      const exec = require('child_process').execFile 
-      exec(resolve(windows[currentIndex].url).replace(/_/g,' '),(a,b,c) =>{
-        console.log(a,b,c)
-      } )
-  // 不受child_process默认的缓冲区大小的使用方法，没参数也要写上{}：workerProcess = exec(cmdStr, {})
- 
-    }
-  }
+  return 
 
 }
 function next(){
   if(currentIndex < 0 ) {
     currentIndex = 0 
   }else{
-    if(windows[currentIndex].type == 'url'){
-      windows[currentIndex].win.hide()
-    }
-    currentIndex = currentIndex == windows.length -1 ?  0 : currentIndex +1
+    if(runner[currentIndex].isWindow)
+    currentWindow && hideWindow(currentWindow.id)
+    currentIndex = currentIndex == runner.length -1 ?  0 : currentIndex +1
+  } 
+  console.log(currentIndex)
+  if(runner[currentIndex].isWindow){
+    showWindow(runner[currentIndex].id)
+  }else {
+    sendMessage(runner[currentIndex].id) 
   }
-  if(windows[currentIndex].type == 'url'){
-    windows[currentIndex].win.show()
-  }else{
-    if(windows[currentIndex].type=='application'){
-      const exec = require('child_process').execFile 
-      console.log(windows[currentIndex].url)
-      exec(resolve(windows[currentIndex].url).replace(/_/g,' '),(a,b,c) =>{
-        console.log(a,b,c)
-      } )
-  // 不受child_process默认的缓冲区大小的使用方法，没参数也要写上{}：workerProcess = exec(cmdStr, {})
- 
-    } 
-  }
-
+  return 
+}  
+  
+function sendMessage(id) { 
+  console.log('active',id)
+  mainWin.webContents.send('active', id)
+  mainWin.moveTop()
+  currentWindow = null
 }
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    // Devtools extensions are broken in Electron 6.0.0 and greater
-    // See https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/378 for more info
-    // Electron will not launch with Devtools extensions installed on Windows 10 with dark mode
-    // If you are not using Windows 10 dark mode, you may uncomment these lines
-    // In addition, if the linked issue is closed, you can upgrade electron and uncomment these lines
-    // try {
-    //   await installVueDevtools()
-    // } catch (e) {
-    //   console.error('Vue Devtools failed to install:', e.toString())
-    // }
-
-  }
-  
-  createWindow()
-
-  // globalShortcut.register('CommandOrControl+E', () => {
-  //   win.webContents.send('editor')
-  // })
-  config.hotKey.previousPage.forEach(key => { 
-      globalShortcut.register(key, () => {
-        pre()
-      })
-  })
-  config.hotKey.nextPage.forEach(key => { 
-    globalShortcut.register(key, () => {
-      next()
-    })
-})
- 
-
-
-  
-  ipcMain.on('delFile',(event,arg1,arg2)=>{ 
-    let d =dialog.showMessageBoxSync({
-      title:'删除',
-      message:`您确认要删除${arg1}?`,
-      buttons:['取消','确定']
-    })
-   //console.log(d)
-    if(d == 1){
-      let p1 = resolvePath(arg1)
-      if(arg2)
-        fs.unlinkSync(p1)
-      else
-      delDir(p1)
-        // fs.rmdirSync(p1,{recursive :true})
-      changeJson('del',dirname(p1),basename(p1)) 
-    }
-    event.returnValue = 'success'
-  })
-  ipcMain.on('delAllfile',(event,arg1)=>{
-
-    // let n = basename(arg1)
-    ////console.log(n)
-    let d =dialog.showMessageBoxSync({
-      title:'删除',
-      message:`您确认要删除${arg1}?`,
-      buttons:['取消','确定']
-    })
-    if(d == 1){
-      let p1 = resolvePath(arg1)
-     //console.log(p1)
-      delDir(p1) 
-      if(fs.existsSync(p1+'.pdf')){
-        fs.unlinkSync(p1+'.pdf')
-      }
-      if(fs.existsSync(p1+'.mp4')){
-        fs.unlinkSync(p1+'.mp4')
-      }
-        // fs.rmdirSync(p1,{recursive :true})
-      changeJson('del',dirname(p1),basename(p1))
-      
-    }
-    event.returnValue = 'success'
-    
-  })
-  ipcMain.on('addFolder',(event,arg1,arg2)=>{
-    try{
-      let p = resolvePath(arg1)
-      fs.mkdirSync(resolvePath(arg1))
-      changeJson('add',dirname(p),basename(p))
-    }catch(e){
-     //console.log(e)
-      event.returnValue = 'fail'
-      return
-    }
-    event.returnValue = 'success'
-  })
-   function changeJson(cmd,src,key){
-    //console.log(cmd,src,key)
-    let json = {}
-    try{
-      let str =   fs.readFileSync(src+'/order.json').toString()
-      json = JSON.parse(str)
-    }catch(e){
-      json = {list:[]}
-     //console.log(e)
-    }
-    let name = key.split('.')[0]
-    switch(cmd){
-      case "add":
-        if(json.list.indexOf(name)<0){
-          json.list.push(name);
-        }
-        break;
-      case 'del':
-        let index = json.list.indexOf(name)
-        if(index>=0){
-          json.list.splice(index,1);
-        }
-       //console.log(json)
-        break;
-      default: break;
-    }
-   //console.log(json)
-    try{ 
-        fs.writeFileSync(src+'/order.json',JSON.stringify(json))
-    }catch(e){
-     //console.log(e)
-    }
-  }
-  ipcMain.on('addFile',(event,arg1,arg2)=>{
-   //console.log('addfile')
-    let properties  = arg2 ? ['openFile'] : ['openDirectory']
-    let path = dialog.showOpenDialogSync(win, {
-      properties:properties
-    })
-    if(path == undefined){
-      event.returnValue ="cancel"
-    }else{
-      if(arg2){
-        let src = path[0]
-        try{
-          let filename= basename(src);
-          let p = resolvePath(arg1)
-          let dist = join(p,filename)
-           fs.copyFileSync(src, dist);
-          changeJson('add',p,filename)
-        }catch(e){
-         //console.log(e)
-          dialog.showMessageBoxSync(win,{
-            title:"错误",
-            message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
-          })
-          event.returnValue = 'faild'
-        }
-      }else{
-       //console.log(path)
-        let folder = path[0]
-        try{
-          let distfolder = resolvePath(arg1);
-          try{
-            let s = fs.statSync(distfolder)
-            if(s.isFile()){
-              fs.mkdirSync(distfolder)
-            }
-          }catch(e){
-            fs.mkdirSync(distfolder)
-          }
-          let files = fs.readdirSync(folder);
-         //console.log(files)
-          files.forEach(name=>{
-            if(name.indexOf('.')>=0)
-            fs.copyFileSync(join(folder,name),join(resolvePath(arg1),name))
-          })
-          changeJson('add',dirname(distfolder),basename(distfolder))
-        }catch(e){
-         //console.log(e)
-          dialog.showMessageBoxSync(win,{
-            title:"错误",
-            message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
-          })
-          event.returnValue = 'faild' 
-        }
-      }
-
-    }
-    event.returnValue = 'success'
-  })
-  ipcMain.on('relaunch',()=>{
-   //console.log('-----relaunch')
-    dialog.showMessageBoxSync(win,{
-      title:'提示',
-      message:'请重新启动应用，是当前编辑生效'
-    })
-    app.quit()
-  })
-  ipcMain.on('selectFile',(event,arg1,arg2)=>{
-   //console.log(arg1,arg2)
-    let properties  = arg2 ? ['openFile'] : ['openDirectory']
-    let path = dialog.showOpenDialogSync(win, {
-      properties:properties
-    })
-    if(path == undefined){
-      event.returnValue ="cancel"
-    }else{
-      if(arg2){
-        let src = path[0]
-        let p = resolvePath(arg1)
-
-        try{
-          let res =  fs.copyFileSync(src, resolvePath(arg1));
-        }catch(e){
-          dialog.showMessageBoxSync(win,{
-            title:"错误",
-            message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
-          })
-          event.returnValue = 'faild'
-        }
-        changeJson('add',dirname(p),basename(p))
-      }else{
-       //console.log(path)
-        let folder = path[0]
-        try{
-          let distfolder = resolvePath(arg1);
-          try{
-            let s = fs.statSync(distfolder)
-            if(s.isFile()){
-              fs.mkdirSync(distfolder)
-            }
-          }catch(e){
-            fs.mkdirSync(distfolder)
-          }
-          let files = fs.readdirSync(folder);
-         //console.log(files)
-          files.forEach(name=>{
-            fs.copyFileSync(join(folder,name),join(resolvePath(arg1),name))
-          })
-          changeJson('add',dirname(distfolder),basename(distfolder))
-        }catch(e){
-         //console.log(e)
-          dialog.showMessageBoxSync(win,{
-            title:"错误",
-            message :'该文件在另外的程序中打开，读取错误，请关闭占用的程序'
-          })
-          event.returnValue = 'faild' 
-        }
-      }
-
-    }
-    event.returnValue = 'success'
-  }) 
-})
-function delDir(path){
-  let files = [];
-  if(fs.existsSync(path)){
-      if(fs.statSync(path).isDirectory()){
-        files = fs.readdirSync(path);
-        files.forEach((file, index) => {
-          let curPath = path + "/" + file;
-          if(fs.statSync(curPath).isDirectory()){
-            delDir(curPath); //递归删除文件夹
-          } else {
-            fs.unlinkSync(curPath); //删除文件
-          }
-        });
-        fs.rmdirSync(path);
-      }else{
-        fs.unlinkSync(path); //删除文件
-      }
-  }
-} 
-function resolvePath(path){
-  if(path.indexOf(':')>=0){
-    return path
+function showWindow(id) {
+  console.log('showwindow',id)
+  let w  = _.find(windows,item => item.id == id)
+  if(w) {
+    activeWindow(w)
+    currentWindow = w
   }else{
-    return join(staticFolder,app.getName(),'content',path)
+    console.log('===error')
+
   }
+}
+
+function hideWindow(id) {
+  let w  = _.find(windows,item => item.id == id)
+  if(!w) return 
+  if(w.type == 'url') {
+    w.win && w.win.hide()
+  }
+}
+function activeWindow(w){
+  console.log(w)
+  if(!w) return 
+  if(w.type == 'url') {
+    if(w.win){
+      w.win.show()
+      w.win.moveTop()
+    } else {
+      w.win = new BrowserWindow({ width: 1920, height: 1080, 
+        // frame:false,
+        show:false,
+        title: w.name,
+        fullscreen: true  ,
+        webPreferences: {
+        nodeIntegration: true,
+        webSecurity:false, 
+        // plugins:true,
+        webviewTag:true
+      } }) 
+      w.win.loadURL(w.url)
+      w.win.on('closed', () => {
+        w.win = null
+      })
+    }
+  }else {
+    if(w.type == 'application') {
+      const exec = require('child_process').execFile   
+
+      const pro = exec(resolve(w.url).replace(/_/g,' '),(a,b,c) =>{
+        console.log(a,b,c)
+      } ) 
+      if(w.bat){
+        const spawn = require('child_process').spawn
+        spawn('cmd.exe',[resolve(w.bat).replace(/_/g,' ')])
+      }
+      // w.pro = pro.pid
+      // console.log(pro.pid)
+      // const spawn = require('child_process').spawn; 
+      // const bat = spawn('kill', ['-9',w.pro]);
+    }
+  }
+}
+
+app.on('ready', async () => {
+  getConfig(createWindow)
+  // createWindow()  
+  globalShortcut.register('CommandOrControl+H', () => {
+    if(!isFocused()) return 
+     if(currentWindow) {
+       hideWindow(currentWindow.id)
+     }
+     isAuto =false
+  })
+   globalShortcut.register('F11', () => {
+      if(!isFocused()) return 
+      console.log(mainWin.isFullScreen())
+      if(mainWin.isFullScreen()){
+       
+         Menu.setApplicationMenu(menu)
+        mainWin.setFullScreen(false) 
+      }else{
+        Menu.setApplicationMenu(null)
+        mainWin.setFullScreen(true) 
+      }
+    })
+    globalShortcut.register('F5', () => {
+      if(!isFocused()) return 
+      if(currentWindow) {
+        currentWindow.win.reload()
+      }else{
+        mainWin.reload()
+      }
+    })
+    globalShortcut.register("CommandOrControl+=", () => {
+      if(!isFocused()) return 
+      if(currentWindow) {
+        let level = currentWindow.win.webContents.getZoomLevel()
+        level += 0.1
+        currentWindow.win.webContents.setZoomLevel(level)
+      }else{
+        let level2 = mainWin.webContents.getZoomLevel()
+        level2 += 0.1
+        mainWin.webContents.setZoomLevel(level2)
+      }
+    })
+    globalShortcut.register('CommandOrControl+-', () => {
+      if(!isFocused()) return 
+      if(currentWindow) {
+        let level = currentWindow.win.webContents.getZoomLevel()
+        level = level >0.5 ? level- 0.1 : 0.5
+        currentWindow.win.webContents.setZoomLevel(level)
+      }else{
+        let level2 = mainWin.webContents.getZoomLevel()
+        level2 = level2 >0.5 ? level2- 0.1 : 0.5
+        mainWin.webContents.setZoomLevel(level2)
+      }
+    })
+
+    globalShortcut.register("Up", () => {
+      if(isFocused()) {
+        pre()
+      }
+    })
+    globalShortcut.register("Left", () => {
+      if(isFocused()) {
+        pre()
+      }
+    })
+    globalShortcut.register("Down", () => {
+      if(isFocused()) {
+        next()
+      }
+    })
+    globalShortcut.register("Right", () => {
+      if(isFocused()) {
+        next()
+      }
+    })
+})
+function isFocused() {
+ let list = BrowserWindow.getAllWindows()
+  for(let i = 0;i<list.length;i++) {
+    if(list[i].isFocused()) {
+      return true 
+    }
+  }
+  return false
 }
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
