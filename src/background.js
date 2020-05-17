@@ -1,10 +1,6 @@
 'use strict'
 
 import { app,Menu,shell, dialog, BrowserWindow ,globalShortcut, ipcMain } from 'electron'
-import {
-  createProtocol,
-  installVueDevtools
-} from 'vue-cli-plugin-electron-builder/lib'
 import {resolve,join,basename,dirname} from 'path'
 import fs, { unlink, exists, existsSync } from 'fs'
 import { resolveAssets } from './utils/utils'
@@ -12,7 +8,7 @@ import * as _ from 'lodash'
 import request from 'request'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 let staticFolder="";
-
+const winapi = require('winapi')
 let isAuto = false
 //static folder
 const template = [
@@ -62,17 +58,20 @@ let config ;
 let currentIndex = -1 
 console.log(configUrl)
 function getConfig(cb){
-  request({
-    url:configUrl
-  },(err,res,body) => {
-    console.log(body)
-    config = JSON.parse(body)
-    cb()
-  })
+  // request({
+  //   url:configUrl
+  // },(err,res,body) => {
+  //   console.log(body)
+  //   config = JSON.parse(body)
+  //   cb()
+  // })
+  let cstr = fs.readFileSync(staticFolder+'/config.json').toString()
+  config = JSON.parse(cstr.replace(/\s/g,'')) 
+  cb()
 }
 
 let timer = null;
-
+console.log(process.versions.modules)
 const runner = []
 let currentWindow;
 // const baseweb = 'http://www.hongyiyingxiao.com/bst'
@@ -95,7 +94,7 @@ function createWindow () {
   mainWin = new BrowserWindow({ width: 1920, height: 1080, 
     // frame:false,
     title: config.title.name,
-    fullscreen:   true  ,
+    fullscreen:  false,
     webPreferences: {
      nodeIntegration: true,
       webSecurity:false, 
@@ -169,7 +168,8 @@ ipcMain.on('hideWindow',(event,id) =>{
       // frame:false,
       show:false,
       title: windows[i].name,
-      fullscreen:   true  ,
+      closable:true,
+      fullscreen:   false  ,
       webPreferences: {
       nodeIntegration: true,
       webSecurity:false, 
@@ -266,38 +266,45 @@ function activeWindow(w){
     if(w.win){
       w.win.show()
       w.win.moveTop()
+      w.win.setFullScreen(true)
     } else {
       w.win = new BrowserWindow({ width: 1920, height: 1080, 
         // frame:false,
         show:false,
         title: w.name,
-        fullscreen: true  ,
+        closable :true,
+        fullscreen: false  ,
         webPreferences: {
         nodeIntegration: true,
         webSecurity:false, 
         // plugins:true,
+        
         webviewTag:true
       } }) 
       w.win.loadURL(w.url)
+      w.win.setFullScreen(false)
       w.win.on('closed', () => {
         w.win = null
       })
     }
   }else {
     if(w.type == 'application') {
-      const exec = require('child_process').execFile   
-
-      const pro = exec(resolve(w.url).replace(/_/g,' '),(a,b,c) =>{
-        console.log(a,b,c)
-      } ) 
-      if(w.bat){
-        const spawn = require('child_process').spawn
-        spawn('cmd.exe',[resolve(w.bat).replace(/_/g,' ')])
-      }
+    
+        // winapi.MaximizeWindow(w.applicationName,()=>{ 
+        //   console.log('----isFOcuesed',isFocused())
+        //   if(isFocused()){
+        //     console.log('open')
+        //     const exec = require('child_process').execFile   
+        //     const pro = exec(resolve(w.url).replace(/_/g,' '),(a,b,c) =>{
+        //     }) 
+        //   }
+        // })
+     
+     
       // w.pro = pro.pid
       // console.log(pro.pid)
-      // const spawn = require('child_process').spawn; 
-      // const bat = spawn('kill', ['-9',w.pro]);
+      const spawn = require('child_process').spawn; 
+      const bat = spawn('node', [w.bat,w.applicationName]);
     }
   }
 }
@@ -315,14 +322,26 @@ app.on('ready', async () => {
    globalShortcut.register('F11', () => {
       if(!isFocused()) return 
       console.log(mainWin.isFullScreen())
-      if(mainWin.isFullScreen()){
-       
-         Menu.setApplicationMenu(menu)
+      if(mainWin.isFocused()){
+
+      if(mainWin.isFullScreen()){ 
+        Menu.setApplicationMenu(menu)
         mainWin.setFullScreen(false) 
       }else{
         Menu.setApplicationMenu(null)
         mainWin.setFullScreen(true) 
       }
+    } 
+    if(currentWindow && currentWindow.win && currentWindow.win.isFocused()){
+      if(currentWindow.win.isFullScreen()){ 
+        currentWindow.win.setFullScreen(false) 
+      }else{
+        currentWindow.win.setFullScreen(true) 
+      }
+    }
+      // if(currentWindow) {
+      //   Menu.setApplicationMenu(null)
+      // }
     })
     globalShortcut.register('F5', () => {
       if(!isFocused()) return 

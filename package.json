@@ -15,20 +15,14 @@
   "main": "background.js",
   "dependencies": {
     "core-js": "^2.6.5",
-    "hammerjs": "^2.0.8",
-    "jquery": "^3.4.1",
+    "electron": "^1.8.8",
+    "fs-extra": "^9.0.0",
     "lodash": "^4.17.15",
-    "node-sass": "^4.12.0",
-    "nw-flash-trust": "^0.3.0",
     "qrcode": "^1.4.2",
     "request": "^2.88.2",
-    "sass-loader": "^7.3.1",
-    "view-design": "^4.1.3",
     "vue": "^2.6.10",
-    "vue-agile": "^1.0.11",
-    "vue-carousel-3d": "^0.2.0",
-    "vue-pdf": "^4.0.7",
     "vue-router": "^3.1.3",
+    "winapi": "^2.7.6",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
@@ -36,7 +30,6 @@
     "@vue/cli-plugin-eslint": "^3.10.0",
     "@vue/cli-service": "^3.10.0",
     "babel-eslint": "^10.0.1",
-    "electron": "^6.0.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "vue-cli-plugin-electron-builder": "^1.4.0",
@@ -52,7 +45,9 @@
       "eslint:recommended"
     ],
     "rules": {
-      "no-console": "off"
+      "no-console": "off",
+      "no-catch-shadow": 0,
+      "no-ex-assign": 0
     },
     "parserOptions": {
       "parser": "babel-eslint"
