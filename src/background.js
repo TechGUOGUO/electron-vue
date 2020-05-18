@@ -8,7 +8,6 @@ import * as _ from 'lodash'
 import request from 'request'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 let staticFolder="";
-const winapi = require('winapi')
 let isAuto = false
 //static folder
 const template = [
@@ -304,7 +303,21 @@ function activeWindow(w){
       // w.pro = pro.pid
       // console.log(pro.pid)
       const spawn = require('child_process').spawn; 
-      const bat = spawn('node', [w.bat,w.applicationName]);
+      const ps = spawn('node', [w.bat,w.applicationName]);
+      ps.stdout.on('data', (data) => {
+        console.log(data);
+      });
+      
+      ps.stderr.on('data', (data) => {
+        console.error(`ps stderr: ${data}`);
+      });
+      
+      ps.on('close', (code) => {
+        if (code !== 0) {
+          console.log(`ps process exited with code ${code}`);
+        } 
+      });
+
     }
   }
 }
